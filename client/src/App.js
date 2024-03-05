@@ -1,31 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from "./routes/Home.js";
+import About from "./routes/About.js";
+import Login from "./routes/Login.js";
+import Navbar from './components/Navbar.js';
 
 function App() {
-  
-  const [backendData, setBackendData] = useState([{}])
-
-  useEffect(() => {
-    fetch("/user").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
-  }, [])
-
   return (
-    <div>
-      {(typeof backendData.users === "undefined") ? (
-        <p>Loading ...</p>
-      ) : (
-        backendData.users.map((user, i) => (
-          <p key={i}>{user}</p>
-        ))
-      )}
-    </div>
+    <BrowserRouter>
+      <Navbar />
+      <div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />}/>
+          <Route path="/login" element={<Login />}/>
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
-
 }
 
 export default App
