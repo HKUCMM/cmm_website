@@ -1,10 +1,7 @@
 const express = require("express");
+const sampleRoute = require("./routes/sample_route");
 const app = express();
 
-// Sample get request
-app.get("/user", (req, res) => {
-    res.json({ "users": ["userOne", "userTwo", "userThree"] });
-    console.log("api called");
-});
+app.use("/api/sample", sampleRoute);
 
 app.listen(5000, () => { console.log("Server started on port 5000!") });

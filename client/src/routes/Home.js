@@ -6,7 +6,7 @@ function Home() {
     const [backendData, setBackendData] = useState([{}]);
 
     useEffect(() => {
-        fetch("/user").then(
+        fetch("api/sample/user").then(
             response => response.json()
         ).then(
             data => {
