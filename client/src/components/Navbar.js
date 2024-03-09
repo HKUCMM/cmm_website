@@ -4,7 +4,7 @@ function Navbar()
 {
     return (
         <nav>
-            <div></div>
+            <div>Park</div>
             <Link to="/">Home</Link>
             <Link to="/about">About</Link>
             <Link to="/login">Login</Link>
