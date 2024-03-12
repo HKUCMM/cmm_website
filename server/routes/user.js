@@ -10,16 +10,17 @@ router.get('/', (req, res) => {
 })
 
 router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
-    var signUpEmail = req.body.signupemail;
-    var signUpName = req.body.signupName;
-    var signUpPassword = req.body.signupPassword;
-    var signUpTeam = req.body.signupTeam;
+    var signupEmail = req.body.signupEmail;
+    var signupFirstName = req.body.signupFirstName;
+    var signupLastName = req.body.signupLastName;
+    var signupPassword = req.body.signupPassword;
+    var signupTeamNo = req.body.signupTeamNo;
     var isAdmin = req.body.isAdmin;
 
-    var duplicateEmailQuery = "SELECT * FROM USERS WHERE EMAIL = ?"
-    var duplicateNameQuery = "SELECT * FROM USERS WHERE NAME = ?";
+    var duplicateEmailQuery = "SELECT * FROM members WHERE email = ?"
+    //var duplicateNameQuery = "SELECT * FROM USERS WHERE NAME = ?";
     
-    db.query(duplicateEmailQuery, [signUpEmail], function(err, emailResults){
+    db.query(duplicateEmailQuery, [signupEmail], function(err, emailResults){
         if(err){
             console.log(err);
             return;
@@ -27,26 +28,17 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
         if(emailResults.length > 0){
             res.send("An account with the same email already exists. Please login with your email");
         } else {
-            db.query(duplicateNameQuery, [signUpName], function(err,nameResults){
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                if (nameResults.length > 0) {
-                    res.send("Username already exists, please choose a different username");
-                } else {
-                    var user = "INSERT INTO USERS (name, email, password, team, isAdmin) VALUES (?,?,?,?,?)";
-                    db.query(user, [signUpName, signUpEmail, signUpPassword, signUpTeam, isAdmin], function(err, result) {
-                        if (err) {
-                            console.error('Error inserting record:', err);
-                            res.status(500).send('Error registering username.');
-                        } else {
-                            res.status(200).send('Registered successfully');
-                        }
-                    });
-                }
-            });
-        }
+            
+          var user = "INSERT INTO members (`name.first`, `name.last`, email, password, is_admin, team_id) VALUES (?, ?, ?, ?, ?, ?);";
+          db.query(user, [signupFirstName, signupLastName, signupEmail, signupPassword, isAdmin, signupTeamNo], function(err, result) {
+              if (err) {
+                  console.error('Error inserting record:', err);
+                  res.status(500).send('Error registering username.');
+              } else {
+                  res.status(200).send('Registered successfully');
+              }
+          });
+        } 
     }); 
 })
 
