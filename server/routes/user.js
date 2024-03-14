@@ -45,7 +45,9 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
 
 router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
   var loginName = req.body.loginName;
+  req.session.loginName = loginName;
   var loginPW = req.body.loginPassword;
+  req.session.loginPW = loginPW;
   var query = `SELECT * FROM USERS WHERE NAME = ?`;
 
   db.query(query, [loginName], function (err, results) {
