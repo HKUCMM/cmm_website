@@ -5,43 +5,50 @@ var pathname = path.join(__dirname, '../');
 const { db } = require(pathname + "database/mysql");
 const session = require('express-session');
 
-/**
- * @swagger
- * /login:
- *   post:
- *    summary: User Login
- *    requestBody: {
- *      content: {
- *        "application/json": {
- *          schema: {
- *            properties: {
- *              loginName:{
- *                type: "string",
- *                description: "user email",
- *                example: "abc@example.com",
- *                },
- *              loginPW: {
- *                type: "string",
- *                description: "user password",
- *                example: "password123@",
- *                },
- *            },
- *          },
- *        },
- *      },
- *    },
- *    response: {
- *      200: {
- *        description: "login successful",
- *      },
- *    };
- * 
- */
-
 router.get('/', (req, res) => {
   res.redirect('/login');
 })
 
+/**
+ * @swagger
+ * paths:
+ *  /signup:
+ *    post:
+ *      tags:
+ *        - user
+ *      description: User signup
+ *      parameters:
+ *      - in: body
+ *        name: body
+ *        required: true
+ *        schema:
+ *          properties:
+ *            signupEmail:
+ *              type: string
+ *            signupFirstName:
+ *              type: string
+ *            signupLastName:
+ *              type: string
+ *            signupPassword:
+ *              type: string
+ *            signupTeamNo:
+ *              type: integer
+ *            isAdmin:
+ *              type: boolean
+ *      responses:
+ *        200:
+ *          description: signup successful
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ *        401:
+ *          description: user already exists
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ */
 router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
     var signupEmail = req.body.signupEmail;
     var signupFirstName = req.body.signupFirstName;
@@ -66,19 +73,50 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
           db.query(user, [signupFirstName, signupLastName, signupEmail, signupPassword, isAdmin, signupTeamNo], function(err, result) {
               if (err) {
                   console.error('Error inserting record:', err);
-                  res.status(500).send('Error registering username.');
+                  res.status(500).send();
               } else {
-                  res.status(200).send('Registered successfully');
+                  res.status(200).send();
               }
           });
         } 
     }); 
 })
 
-
+/**
+ * @swagger
+ * paths:
+ *  /login:
+ *    post:
+ *      tags:
+ *        - user
+ *      description: User log-in
+ *      parameters:
+ *      - in: body
+ *        name: body
+ *        required: true
+ *        schema:
+ *          properties:
+ *            loginName:
+ *              type: string
+ *            loginPW:
+ *              type: string
+ *      responses:
+ *        200:
+ *          description: login successful
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ *        401:
+ *          description: login failed
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ */
 router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
   var loginName = req.body.loginName;
-  req.session.loginName = loginName;
+  req.session.loginEmail = loginEmail;
   var loginPW = req.body.loginPassword;
   req.session.loginPW = loginPW;
   var query = `SELECT * FROM USERS WHERE NAME = ?`;
@@ -102,10 +140,30 @@ router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
   });
 })
 
+/**
+ * @swagger
+ * paths:
+ *  /logout:
+ *    get:
+ *      tags:
+ *        - user
+ *      description: User log-out
+ *      responses:
+ *        200:
+ *          description: logout successful
+ *        401:
+ *          description: logout failed
+ */
 router.get('/logout', (req, res) => {
   req.session.loginName = null;
   req.session.userId = null;
-  res.redirect('/');
+  if(!req.session.loginEmail){
+    res.status(200).send();
+  }
+  else{
+    res.status(404).send();
+  }
+  //res.redirect('/');
 })
 
 module.exports = router;
