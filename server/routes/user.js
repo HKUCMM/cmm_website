@@ -96,10 +96,7 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
  *        required: true
  *        schema:
  *          properties:
-<<<<<<< HEAD
  *            loginEmail:
-=======
->>>>>>> development
  *              type: string
  *            loginPW:
  *              type: string
@@ -117,20 +114,11 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
  *              message:
  *                type: string
  */
-<<<<<<< HEAD
 
 router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
   var loginEmail = req.body.loginEmail;
   var loginPw = req.body.loginPW;
   var query = `SELECT email, password, member_id FROM members WHERE email = ?`;
-=======
-router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
-  var loginName = req.body.loginName;
-  req.session.loginEmail = loginEmail;
-  var loginPW = req.body.loginPassword;
-  req.session.loginPW = loginPW;
-  var query = `SELECT * FROM USERS WHERE NAME = ?`;
->>>>>>> development
 
   db.query(query, [loginEmail], function (err, results) {
       if (err) {
@@ -144,14 +132,11 @@ router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
           return;
       }
 
-<<<<<<< HEAD
       res.status(401).send();
   });
 });
 
 
-=======
->>>>>>> development
 /**
  * @swagger
  * paths:
