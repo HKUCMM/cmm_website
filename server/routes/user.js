@@ -114,31 +114,29 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
  *              message:
  *                type: string
  */
-router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
-  var loginName = req.body.loginName;
-  req.session.loginEmail = loginEmail;
-  var loginPW = req.body.loginPassword;
-  req.session.loginPW = loginPW;
-  var query = `SELECT * FROM USERS WHERE NAME = ?`;
 
-  db.query(query, [loginName], function (err, results) {
-    if (err) {
-      console.log(err);
-      return;
-    }
-    
-    console.log(results[0])
-    if (results[0]) {
-      if (results[0].password == loginPW) {
-        req.session.loginName = loginName;
-        req.session.userId = results[0].ID;
-        res.status(200).send('Success');
-        return;
+router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
+  var loginEmail = req.body.signupEmail;
+  var loginPw = req.body.signupPassword;
+  var query = `SELECT email, password, member_id FROM members WHERE email = ?`;
+
+  db.query(query, [loginEmail], function (err, results) {
+      if (err) {
+          console.log(err);
+          return;
       }
-    }
-    res.status(404).send('404 Not Found');
+
+      if (results[0].password == loginPw && results[0].email == loginEmail) {
+          req.session.email = loginEmail;
+          req.session.userId = results.member_id;
+          res.status(200).send('Success');
+          return;
+      }
+
+      res.status(404).send('404 Not Found');
   });
-})
+});
+
 
 /**
  * @swagger
