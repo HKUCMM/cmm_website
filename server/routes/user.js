@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const path = require('path');
+const crypto = require('crypto');
 var pathname = path.join(__dirname, '../');
 const { db } = require(pathname + "database/mysql");
 const session = require('express-session');

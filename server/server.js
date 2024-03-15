@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-const { swaggerUi, specs } = require('./node_modules/swagger');
+const { swaggerUi, specs } = require('./modules/swagger');
 var user_router = require('./routes/user');
 var content_router = require('./routes/content')
 //var display_router = require('./routes/display');
