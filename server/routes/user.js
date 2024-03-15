@@ -5,6 +5,39 @@ var pathname = path.join(__dirname, '../');
 const { db } = require(pathname + "database/mysql");
 const session = require('express-session');
 
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *    summary: User Login
+ *    requestBody: {
+ *      content: {
+ *        "application/json": {
+ *          schema: {
+ *            properties: {
+ *              loginName:{
+ *                type: "string",
+ *                description: "user email",
+ *                example: "abc@example.com",
+ *                },
+ *              loginPW: {
+ *                type: "string",
+ *                description: "user password",
+ *                example: "password123@",
+ *                },
+ *            },
+ *          },
+ *        },
+ *      },
+ *    },
+ *    response: {
+ *      200: {
+ *        description: "login successful",
+ *      },
+ *    };
+ * 
+ */
+
 router.get('/', (req, res) => {
   res.redirect('/login');
 })

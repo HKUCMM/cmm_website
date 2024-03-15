@@ -1,11 +1,14 @@
 var express = require('express');
 var app = express();
+const { swaggerUi, specs } = require('./node_modules/swagger');
 var user_router = require('./routes/user');
 var content_router = require('./routes/content')
 //var display_router = require('./routes/display');
 var session = require('express-session');
 
 app.set('view engine', 'ejs');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(
   session({
