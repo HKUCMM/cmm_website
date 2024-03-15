@@ -96,7 +96,7 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
  *        required: true
  *        schema:
  *          properties:
- *            loginName:
+ *            loginEmail:
  *              type: string
  *            loginPW:
  *              type: string
@@ -116,8 +116,8 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
  */
 
 router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
-  var loginEmail = req.body.signupEmail;
-  var loginPw = req.body.signupPassword;
+  var loginEmail = req.body.loginEmail;
+  var loginPw = req.body.loginPW;
   var query = `SELECT email, password, member_id FROM members WHERE email = ?`;
 
   db.query(query, [loginEmail], function (err, results) {
@@ -125,15 +125,14 @@ router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
           console.log(err);
           return;
       }
-
-      if (results[0].password == loginPw && results[0].email == loginEmail) {
+      if (!results && results[0].password == loginPw && results[0].email == loginEmail) {
           req.session.email = loginEmail;
           req.session.userId = results.member_id;
-          res.status(200).send('Success');
+          res.status(200).send();
           return;
       }
 
-      res.status(404).send('404 Not Found');
+      res.status(401).send();
   });
 });
 
