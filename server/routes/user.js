@@ -9,17 +9,58 @@ router.get('/', (req, res) => {
   res.redirect('/login');
 })
 
+/**
+ * @swagger
+ * paths:
+ *  /signup:
+ *    post:
+ *      tags:
+ *        - user
+ *      description: User signup
+ *      parameters:
+ *      - in: body
+ *        name: body
+ *        required: true
+ *        schema:
+ *          properties:
+ *            signupEmail:
+ *              type: string
+ *            signupFirstName:
+ *              type: string
+ *            signupLastName:
+ *              type: string
+ *            signupPassword:
+ *              type: string
+ *            signupTeamNo:
+ *              type: integer
+ *            isAdmin:
+ *              type: boolean
+ *      responses:
+ *        200:
+ *          description: signup successful
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ *        401:
+ *          description: user already exists
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ */
 router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
-    var signUpEmail = req.body.signupemail;
-    var signUpName = req.body.signupName;
-    var signUpPassword = req.body.signupPassword;
-    var signUpTeam = req.body.signupTeam;
+    var signupEmail = req.body.signupEmail;
+    var signupFirstName = req.body.signupFirstName;
+    var signupLastName = req.body.signupLastName;
+    var signupPassword = req.body.signupPassword;
+    var signupTeamNo = req.body.signupTeamNo;
     var isAdmin = req.body.isAdmin;
 
-    var duplicateEmailQuery = "SELECT * FROM USERS WHERE EMAIL = ?"
-    var duplicateNameQuery = "SELECT * FROM USERS WHERE NAME = ?";
+    var duplicateEmailQuery = "SELECT * FROM members WHERE email = ?"
+    //var duplicateNameQuery = "SELECT * FROM USERS WHERE NAME = ?";
     
-    db.query(duplicateEmailQuery, [signUpEmail], function(err, emailResults){
+    db.query(duplicateEmailQuery, [signupEmail], function(err, emailResults){
         if(err){
             console.log(err);
             return;
@@ -27,33 +68,57 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
         if(emailResults.length > 0){
             res.send("An account with the same email already exists. Please login with your email");
         } else {
-            db.query(duplicateNameQuery, [signUpName], function(err,nameResults){
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                if (nameResults.length > 0) {
-                    res.send("Username already exists, please choose a different username");
-                } else {
-                    var user = "INSERT INTO USERS (name, email, password, team, isAdmin) VALUES (?,?,?,?,?)";
-                    db.query(user, [signUpName, signUpEmail, signUpPassword, signUpTeam, isAdmin], function(err, result) {
-                        if (err) {
-                            console.error('Error inserting record:', err);
-                            res.status(500).send('Error registering username.');
-                        } else {
-                            res.status(200).send('Registered successfully');
-                        }
-                    });
-                }
-            });
-        }
+            
+          var user = "INSERT INTO members (`name.first`, `name.last`, email, password, is_admin, team_id) VALUES (?, ?, ?, ?, ?, ?);";
+          db.query(user, [signupFirstName, signupLastName, signupEmail, signupPassword, isAdmin, signupTeamNo], function(err, result) {
+              if (err) {
+                  console.error('Error inserting record:', err);
+                  res.status(500).send();
+              } else {
+                  res.status(200).send();
+              }
+          });
+        } 
     }); 
 })
 
-
+/**
+ * @swagger
+ * paths:
+ *  /login:
+ *    post:
+ *      tags:
+ *        - user
+ *      description: User log-in
+ *      parameters:
+ *      - in: body
+ *        name: body
+ *        required: true
+ *        schema:
+ *          properties:
+ *            loginName:
+ *              type: string
+ *            loginPW:
+ *              type: string
+ *      responses:
+ *        200:
+ *          description: login successful
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ *        401:
+ *          description: login failed
+ *          schema:
+ *            properties:
+ *              message:
+ *                type: string
+ */
 router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
   var loginName = req.body.loginName;
+  req.session.loginEmail = loginEmail;
   var loginPW = req.body.loginPassword;
+  req.session.loginPW = loginPW;
   var query = `SELECT * FROM USERS WHERE NAME = ?`;
 
   db.query(query, [loginName], function (err, results) {
@@ -75,10 +140,30 @@ router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
   });
 })
 
+/**
+ * @swagger
+ * paths:
+ *  /logout:
+ *    get:
+ *      tags:
+ *        - user
+ *      description: User log-out
+ *      responses:
+ *        200:
+ *          description: logout successful
+ *        401:
+ *          description: logout failed
+ */
 router.get('/logout', (req, res) => {
   req.session.loginName = null;
   req.session.userId = null;
-  res.redirect('/');
+  if(!req.session.loginEmail){
+    res.status(200).send();
+  }
+  else{
+    res.status(404).send();
+  }
+  //res.redirect('/');
 })
 
 module.exports = router;

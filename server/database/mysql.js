@@ -1,10 +1,10 @@
 var mysql = require('mysql2');
 
 var db = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'',
-    database:'cmm_website'
+    host:'cmm-website-db.czr2qjvs9lj9.ap-southeast-1.rds.amazonaws.com',
+    user:'admin',
+    password:'234516qwe',
+    database:'cmm_website_db'
 });
 
 db.connect((err) => {
