@@ -161,7 +161,7 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
 
 router.post('/login', express.urlencoded({ extended: true }), async (req, res) => {
   var loginEmail = req.body.loginEmail;
-  var loginPassword = req.body.loginPassword;
+  var loginPassword = req.body.loginPW;
   var query = `SELECT member_id, \`name.first\`, \`name.last\`, email, password, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
   try {
       const results = await new Promise((resolve, reject) => {
