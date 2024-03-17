@@ -6,6 +6,46 @@ var pathname = path.join(__dirname, '../');
 const { db } = require(pathname + "database/mysql");
 const session = require('express-session');
 
+const createSalt = () => {
+  return new Promise((resolve, reject) => {
+      crypto.randomBytes(64, (err, buf) => {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(buf.toString("base64"));
+          }
+      });
+  });
+};
+
+const pbkdf2_iterations = 10371;
+const createHashedPassword = async (password) => {
+  const salt = await createSalt();
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, pbkdf2_iterations, 64, "sha512", (err, key) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const hashedPassword = key.toString("base64");
+      resolve({ hashedPassword, salt });
+    });
+  });
+};
+
+const verifyPassword = async (userPassword, userSalt, passwordAttempt) => {
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(passwordAttempt, userSalt, pbkdf2_iterations, 64, "sha512", (err, key) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const hashedPasswordAttempt = key.toString("base64");
+      resolve(hashedPasswordAttempt === userPassword);
+    });
+  });
+};
+
 router.get('/', (req, res) => {
   res.redirect('/login');
 })
@@ -52,45 +92,7 @@ router.get('/', (req, res) => {
  */
 
 
-const createSalt = () => {
-  return new Promise((resolve, reject) => {
-      crypto.randomBytes(64, (err, buf) => {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(buf.toString("base64"));
-          }
-      });
-  });
-};
 
-const pbkdf2_iterations = 10371;
-const createHashedPassword = async (password) => {
-  const salt = await createSalt();
-  return new Promise((resolve, reject) => {
-    crypto.pbkdf2(password, salt, pbkdf2_iterations, 64, "sha512", (err, key) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const hashedPassword = key.toString("base64");
-      resolve({ hashedPassword, salt });
-    });
-  });
-};
-
-const verifyPassword = async (userPassword, userSalt, passwordAttempt) => {
-  return new Promise((resolve, reject) => {
-    crypto.pbkdf2(passwordAttempt, userSalt, pbkdf2_iterations, 64, "sha512", (err, key) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      const hashedPasswordAttempt = key.toString("base64");
-      resolve(hashedPasswordAttempt === userPassword);
-    });
-  });
-};
 
 
 router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
