@@ -50,6 +50,49 @@ router.get('/', (req, res) => {
  *              message:
  *                type: string
  */
+
+
+const createSalt = () => {
+  return new Promise((resolve, reject) => {
+      crypto.randomBytes(64, (err, buf) => {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(buf.toString("base64"));
+          }
+      });
+  });
+};
+
+const pbkdf2_iterations = 10371;
+const createHashedPassword = async (password) => {
+  const salt = await createSalt();
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, pbkdf2_iterations, 64, "sha512", (err, key) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const hashedPassword = key.toString("base64");
+      resolve({ hashedPassword, salt });
+    });
+  });
+};
+
+const verifyPassword = async (userPassword, userSalt, passwordAttempt) => {
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(passwordAttempt, userSalt, pbkdf2_iterations, 64, "sha512", (err, key) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const hashedPasswordAttempt = key.toString("base64");
+      resolve(hashedPasswordAttempt === userPassword);
+    });
+  });
+};
+
+
 router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
     var signupEmail = req.body.signupEmail;
     var signupFirstName = req.body.signupFirstName;
@@ -116,26 +159,36 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
  *                type: string
  */
 
-router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
+router.post('/login', express.urlencoded({ extended: true }), async (req, res) => {
   var loginEmail = req.body.loginEmail;
-  var loginPw = req.body.loginPW;
-  var query = `SELECT email, password, member_id FROM members WHERE email = ?`;
+  var loginPassword = req.body.loginPassword;
+  var query = `SELECT member_id, \`name.first\`, \`name.last\`, email, password, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
+  try {
+      const results = await new Promise((resolve, reject) => {
+          db.query(query, [loginEmail], function (err, results) {
+              if (err) {
+                  reject(err);
+              } else {
+                  resolve(results);
+              }
+          });
+      });
 
-  db.query(query, [loginEmail], function (err, results) {
-      if (err) {
-          console.log(err);
-          return;
-      }
-      if (!results && results[0].password == loginPw && results[0].email == loginEmail) {
+      const verified = await verifyPassword(results[0].hashed_password, results[0].salt, loginPassword);
+
+      if (verified) {
           req.session.email = loginEmail;
           req.session.userId = results.member_id;
           res.status(200).send();
-          return;
+      } else {
+          res.status(401).send();
       }
-
-      res.status(401).send();
-  });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send();
+  }
 });
+
 
 
 /**
