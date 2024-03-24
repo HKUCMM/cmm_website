@@ -40,11 +40,30 @@ const verifyPassword = async (userPassword, userSalt, passwordAttempt) => {
         reject(err);
         return;
       }
-      const hashedPasswordAttempt = key.toString("base64");
-      resolve(hashedPasswordAttempt === userPassword);
+      const hashedPasswordAttempt = key.toString('hex');
+      //console.log(key);
+      const hash = crypto.createHash('sha512');
+      hash.update(passwordAttempt+userSalt);
+      resolve(hash.digest('hex') === userPassword);
     });
   });
 };
+
+function checkPassword(userPassword, userSalt, passwordAttempt) {
+  //const hashedPasswordAttempt = key.toString('hex');
+  //console.log(key);
+  const hash = crypto.createHash('sha512');
+  hash.update(passwordAttempt+userSalt);
+  
+  return(hash.digest('hex') === userPassword);
+}
+
+function createHash(userPassword){
+  const hash = crypto.createHash('sha512');
+  hash.update(userPassword);
+
+  return(hash.digest('hex'));
+}
 
 router.get('/', (req, res) => {
   res.redirect('/login');
@@ -94,7 +113,7 @@ router.get('/', (req, res) => {
 
 
 
-
+/*
 router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
     var signupEmail = req.body.signupEmail;
     var signupFirstName = req.body.signupFirstName;
@@ -126,7 +145,33 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
           });
         } 
     }); 
-})
+})*/
+
+router.post('/changepw', express.urlencoded({ extended: true }), async (req, res) => {
+  var newPassword = req.body.newPassword;
+  //console.log(req.session.userId);
+  var queryA = `SELECT salt FROM members WHERE member_id = ? `;
+  var userSalt = '';
+  db.query(queryA, [req.body.userId], function(err, results){
+    if (err){
+      res.status(404).send();
+    } else{
+      console.log(results[0]);
+      userSalt = results[0].salt;
+      
+      var queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ?`;
+      db.query(queryB, [createHash(newPassword+userSalt), req.body.userId], function(err, results){
+        if (err){
+          res.status(401).send();
+        } else{
+          res.status(200).send('updated successfully');
+        }
+      });
+
+    }
+  });
+});
+
 
 /**
  * @swagger
@@ -168,22 +213,24 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
   try {
       const results = await new Promise((resolve, reject) => {
           db.query(query, [loginEmail], function (err, results) {
-              if (err) {
-                  reject(err);
-              } else {
-                  resolve(results);
-              }
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+                //console.log(results);
+            }
           });
       });
 
-      const verified = await verifyPassword(results[0].hashed_password, results[0].salt, loginPassword);
+      //const verified = await verifyPassword(results[0].hashed_password, results[0].salt, loginPassword);
+      const verified = checkPassword(results[0].hashed_password, results[0].salt, loginPassword);
 
       if (verified) {
           req.session.email = loginEmail;
           req.session.userId = results.member_id;
-          res.status(200).send();
+          res.status(200).send('login succsessful');
       } else {
-          res.status(401).send();
+          res.status(401).send('login info incorrect');
       }
   } catch (err) {
       console.error(err);
