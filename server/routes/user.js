@@ -159,7 +159,7 @@ router.post('/changepw', express.urlencoded({ extended: true }), async (req, res
       console.log(results[0]);
       userSalt = results[0].salt;
       
-      var queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ?`;
+      var queryB = `UPDATE members SET hashed_password = ?, password = null WHERE member_id = ?`;
       db.query(queryB, [createHash(newPassword+userSalt), req.body.userId], function(err, results){
         if (err){
           res.status(401).send();
@@ -209,6 +209,19 @@ router.post('/changepw', express.urlencoded({ extended: true }), async (req, res
 router.post('/login', express.urlencoded({ extended: true }), async (req, res) => {
   var loginEmail = req.body.loginEmail;
   var loginPassword = req.body.loginPW;
+  //check whether it is first login, if true, redirect to changepw endpoint
+  var queryA = `SELECT password FROM members WHERE email = ?`;
+  db.query(queryA, [loginEmail], function(err, results){
+    if(err){
+      res.status(404).send();
+    }
+    else if(results){
+      redirect('/changepw');
+      return;
+    }
+  });
+
+
   var query = `SELECT member_id, \`name.first\`, \`name.last\`, email, password, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
   try {
       const results = await new Promise((resolve, reject) => {
@@ -228,6 +241,7 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
       if (verified) {
           req.session.email = loginEmail;
           req.session.userId = results.member_id;
+
           res.status(200).send('login succsessful');
       } else {
           res.status(401).send('login info incorrect');
