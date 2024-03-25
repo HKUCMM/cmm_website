@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 //배경색 그레이20 (임의)
 const FooterBox = styled.div`
-  background: #333;
+  background: #747474;
 `;
 
 const TopBox = styled.div`
@@ -32,7 +32,7 @@ const ContactBox = styled.div`
 
 //grey 임의
 const ListTitle = styled.span`
-  color: grey;
+  color: #bdbdbd;
   padding-bottom: 85px;
 `;
 
@@ -70,7 +70,7 @@ const Footer = () => {
         <ListBox>
           <ListTitle>CONTACT</ListTitle>
           <ContactBox>
-            <ListItem style={{ color: "grey" }}>
+            <ListItem style={{ color: "#bdbdbd" }}>
               <li>ADDRESS</li>
               <li>E-MAIL</li>
               <li>WEBSITE</li>
