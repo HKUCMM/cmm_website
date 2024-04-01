@@ -5,7 +5,11 @@ function Mynav() {
 
   return (
     <>
-      <Navbar bg="dark" data-bs-theme="dark">
+      <Navbar
+        style={{ backgroundColor: "#1D2528" }}
+        bg="dark"
+        data-bs-theme="dark"
+      >
         <Container>
           <Navbar.Brand href="#home">
             <img src="/CMM_LOGO.png" alt="CMM Logo" width="80px" />
