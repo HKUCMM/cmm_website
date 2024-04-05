@@ -53,7 +53,7 @@
   text-align: left;
 }
 
-.email {
+.input {
   margin-bottom: 24px;
   padding-left: 11px;
   border: 0.7px solid #1d2528;
@@ -68,19 +68,12 @@
   color: #1d2528;
 }
 
-.password {
-  margin-bottom: 24px;
-  padding-left: 11px;
-  border: 0.7px solid #1d2528;
-  width: 388px;
-  height: 52px;
-  border-radius: 10px;
-  font-family: Titillium Web;
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 30.42px;
-  text-align: left;
-  color: #1d2528;
+.input:focus {
+  border: 4px solid #1D252866;
+}
+
+.falseInput {
+  border: 1.5px solid #DD0000
 }
 
 .forget {
