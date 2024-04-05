@@ -1,0 +1,122 @@
+.login {
+  position: relative;
+  padding-top: 112px;
+  padding-left: 70px;
+  padding-right: 159px;
+  height: 710px;
+  background: #1d2528;
+  display: flex;
+  align-items: top;
+  justify-content: space-between;
+}
+
+.leftBox {
+  height: 129px;
+  display: flex;
+  flex-direction: column;
+}
+
+.leftHeader {
+  color: #ffffff;
+  font-family: Titillium Web;
+  font-size: 60px;
+  font-weight: 400;
+  line-height: 91.26px;
+}
+
+.leftWelcome {
+  color: #aaaaaa;
+  font-family: Titillium Web;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 36.5px;
+  text-align: top;
+}
+
+.right {
+  background: #ffffff;
+  width: 481px;
+  height: 468px;
+  gap: 0px;
+  opacity: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rightHeader {
+  margin: 38px;
+  font-family: Titillium Web;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 48.67px;
+  text-align: left;
+}
+
+.email {
+  margin-bottom: 24px;
+  padding-left: 11px;
+  border: 0.7px solid #1d2528;
+  width: 388px;
+  height: 52px;
+  border-radius: 10px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  text-align: left;
+  color: #1d2528;
+}
+
+.password {
+  margin-bottom: 24px;
+  padding-left: 11px;
+  border: 0.7px solid #1d2528;
+  width: 388px;
+  height: 52px;
+  border-radius: 10px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  text-align: left;
+  color: #1d2528;
+}
+
+.forget {
+  position: absolute;
+  right: 206px;
+  top: 362px;
+  height: 18px;
+  font-family: Titillium Web;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18.25px;
+  text-align: left;
+  color: red;
+}
+
+.loginButton {
+  background: #1d2528;
+  width: 388px;
+  height: 52px;
+  border-radius: 10px;
+  margin-top: 20px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.signup {
+  margin-top: 65px;
+  height: 23px;
+  font-family: Titillium Web;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 22.82px;
+  text-align: center;
+  display: flex;
+}

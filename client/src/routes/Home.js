@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 function Home() {
+  // Sample API fetch
+  // const [backendData, setBackendData] = useState([{}]);
 
-    // Sample API fetch
-    const [backendData, setBackendData] = useState([{}]);
+  // useEffect(() => {
+  //     fetch("api/sample/user").then(
+  //         response => response.json()
+  //     ).then(
+  //         data => {
+  //             setBackendData(data)
+  //         }
+  //     )
+  // }, []);
 
-    useEffect(() => {
-        fetch("api/sample/user").then(
-            response => response.json()
-        ).then(
-            data => {
-                setBackendData(data)
-            }
-        )
-    }, []);
-
-    return (
-        <>
-            <h1>Home Page</h1>
-            <div>
+  return (
+    <>
+      <h1>Home Page</h1>
+      {/* <div>
                 {(typeof backendData.users === "undefined") ? (
                     <p>Loading ...</p>
                 ) : (
@@ -26,9 +25,9 @@ function Home() {
                         <p key={i}>{user}</p>
                     ))
                 )}
-            </div>
-        </>
-    );
+            </div> */}
+    </>
+  );
 }
 
 export default Home;
