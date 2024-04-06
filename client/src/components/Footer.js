@@ -58,7 +58,7 @@ const Copyright = styled.div`
   text-align: center;
   border-top: 2px solid #ffffff;
   display: flex;
-  lex-direction: column;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
