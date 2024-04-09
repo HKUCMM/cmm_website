@@ -54,8 +54,8 @@
 }
 
 .input {
-  margin-bottom: 24px;
   padding-left: 11px;
+  margin-bottom: 24px;
   border: 0.7px solid #1d2528;
   width: 388px;
   height: 52px;
@@ -73,7 +73,50 @@
 }
 
 .falseInput {
-  border: 1.5px solid #DD0000
+  padding-left: 11px;
+  margin-bottom: 24px;
+  border: 1.5px solid #DD0000;
+  width: 388px;
+  height: 52px;
+  border-radius: 10px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  text-align: left;
+  color: #1d2528;
+}
+
+.falseInput:focus {
+  border: 4px solid #1D252866;
+}
+
+.errorEmail {
+  position: absolute;
+  top: 293px;
+  margin: 0px;
+  align-items: left;
+  width: 388px;
+  height: 18px;
+  color: #DD0000;
+  font-family: Titillium Web;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18.25px;
+}
+
+.errorPassword {
+  position: absolute;
+  top: 373px;
+  margin: 0px;
+  align-items: left;
+  width: 388px;
+  height: 18px;
+  color: #DD0000;
+  font-family: Titillium Web;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18.25px;
 }
 
 .forget {
