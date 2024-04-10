@@ -13,7 +13,6 @@ function Mynav() {
         <Container>
           <Navbar.Brand href="#home">
             <img src="/CMM_LOGO.png" alt="CMM Logo" width="80px" />
-            {/* //  이거 이미지는 public에다가 넣어놓으면 되나요? */}
           </Navbar.Brand>
           <Nav className="ms-auto">
             {navItem.map(function (a) {
