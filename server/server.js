@@ -1,9 +1,9 @@
 var express = require('express');
 var app = express();
 const { swaggerUi, specs } = require('./modules/swagger');
-var user_router = require('./routes/user');
-var content_router = require('./routes/content')
-//var display_router = require('./routes/display');
+var userRouter = require('./routes/user');
+var contentRouter = require('./routes/content');
+var commentRouter = require('./routes/comment');
 var session = require('express-session');
 require('dotenv').config();
 
@@ -13,15 +13,16 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(
   session({
-    secret: 'mysecretkey', // Replace with your own secret key
+    secret: 'mysecretkey',
     resave: false,
     saveUninitialized: true,
   })
 );
 
 app.use(express.json());
-app.use('/', user_router);
-app.use('/', content_router);
+app.use('/', userRouter);
+app.use('/', contentRouter);
+app.use('/', commentRouter);
 
 const port = process.env.PORT;
 
