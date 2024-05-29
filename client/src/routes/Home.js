@@ -16,7 +16,6 @@ function Home() {
 
   return (
     <>
-      <h1>Home Page</h1>
       {/* <div>
                 {(typeof backendData.users === "undefined") ? (
                     <p>Loading ...</p>
