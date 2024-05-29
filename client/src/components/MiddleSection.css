@@ -3,12 +3,12 @@
     justify-content: left;
     align-items: center;
     height: 70vh; 
-    /*background-image:  Add background image*/ 
     background-size: cover;
     background-position: center;
     background-color: #1d2528;
     color: white;
     text-align: center;
+    padding-left: 50px
     
   }
   
@@ -22,13 +22,12 @@
   .content h1 {
     font-size: 7em;
     margin: 0;
-    letter-spacing: 0.1em;
     font-weight: bold;
   }
   
   .content h2 {
     font-size: 3em;
-    margin: 0.5em 0;
+    margin: 0.2em 0;
     letter-spacing: 0.1em;
   }
   
