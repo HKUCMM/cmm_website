@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../style/login.css";
+import axios from "axios";
 
 const Login = () => {
   const [inputFields, setInputFields] = useState({
@@ -33,12 +34,32 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors(validateValues(inputFields));
+
+    axios
+      .get(`${process.env.REACT_APP_API_URL}`)
+      .then((result) => {
+        result.data.map((user) => {
+          if (user.loginEmail === inputFields.email) {
+            if (user.loginPW === inputFields.password) {
+              console.log("Login successfully");
+            } else {
+              errors.password = "Wrong Password";
+            }
+          } else if (inputFields.email !== "") {
+            errors.email = "Wrong email";
+          }
+        });
+        setErrors(errors);
+      })
+      .catch((err) => console.log(err));
+
     setSubmitting(true);
   };
 
   const finishSubmit = () => {
     console.log(inputFields);
   };
+
   useEffect(() => {
     if (Object.keys(errors).length === 0 && submitting) {
       finishSubmit();
