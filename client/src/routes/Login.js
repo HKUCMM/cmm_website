@@ -34,11 +34,18 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors(validateValues(inputFields));
+    if (Object.keys(errors).length === 0) {
+      setErrors(handleAPI());
+    }
+    setSubmitting(true);
+  };
 
+  const handleAPI = () => {
     axios
       .get(`${process.env.REACT_APP_API_URL}`)
       .then((result) => {
         result.data.map((user) => {
+          let errors = {};
           if (user.loginEmail === inputFields.email) {
             if (user.loginPW === inputFields.password) {
               console.log("Login successfully");
@@ -49,11 +56,9 @@ const Login = () => {
             errors.email = "Wrong email";
           }
         });
-        setErrors(errors);
+        return errors;
       })
       .catch((err) => console.log(err));
-
-    setSubmitting(true);
   };
 
   const finishSubmit = () => {
