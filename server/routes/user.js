@@ -199,7 +199,6 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
       res.status(401).send('login info incorrect');
     }
   } catch (err) {
-    console.error(err);
     res.status(500).send();
   }
 });
