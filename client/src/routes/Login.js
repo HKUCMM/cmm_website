@@ -34,26 +34,28 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrors(validateValues(inputFields));
-    if (Object.keys(errors).length === 0) {
-      setErrors(handleAPI());
-    }
+    // if (Object.keys(errors).length === 0) {
+    //   setErrors(handleAPI(inputFields));
+    // }
     setSubmitting(true);
   };
 
-  const handleAPI = () => {
+  const handleAPI = (inputValues) => {
+    let errors = {};
     axios
       .get(`${process.env.REACT_APP_API_URL}`)
       .then((result) => {
         result.data.map((user) => {
-          let errors = {};
-          if (user.loginEmail === inputFields.email) {
-            if (user.loginPW === inputFields.password) {
+          if (user.loginEmail === inputValues.email) {
+            if (user.loginPW === inputValues.password) {
               console.log("Login successfully");
             } else {
               errors.password = "Wrong Password";
+              errors.wrongPassword = "Wrong Password";
             }
           } else if (inputFields.email !== "") {
             errors.email = "Wrong email";
+            errors.nonexistEmail = "Wrong email";
           }
         });
         return errors;
