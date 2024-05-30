@@ -2,5 +2,10 @@
 /node_modules
 
 # misc
-.DS_Store
+<<<<<<< HEAD
 .env
+*.DS_Store
+=======
+.env.DS_Store
+.DS_Store
+>>>>>>> feature/back/swagger
