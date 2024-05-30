@@ -5,7 +5,7 @@ import About from "./routes/About.js";
 import Login from "./routes/Login.js";
 import Mynav from "./components/Navbar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import MiddlePage from "./components/Mainpage.js";
+import Footer from "./components/Footer.js";
 
 function App() {
 	return (
@@ -18,6 +18,7 @@ function App() {
 					<Route path="/login" element={<Login />} />
 				</Routes>
 			</div>
+			<Footer />
 		</BrowserRouter>
 	);
 }
