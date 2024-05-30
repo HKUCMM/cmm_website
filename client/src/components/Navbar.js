@@ -1,39 +1,46 @@
-import { Navbar, Container, Nav } from "react-bootstrap";
+import { Navbar as NavbarBS, Container as ContainerBS, Nav as NavBS } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-function Mynav() {
-  let navItem = ["ABOUT", "PROJECT", "NOTICE", "CONTACT US", "LOG IN"];
+function NavBar() {
+  const navBarItems = [["ABOUT", "about"], ["PROJECT", "projects"], ["NOTICE", "projects"], ["CONTACT US", "contacts"], ["LOG IN", "login"]]; // navBarItems[0]: name, navBarItems[1]: link
+
+  const navigate = useNavigate();
+  const handleNavClick = (path) => {
+    navigate(`${path}`);
+  };
 
   return (
     <>
-      <Navbar
-        style={{ backgroundColor: "#1D2528" }}
-        bg="dark"
-        data-bs-theme="dark"
-      >
-        <Container>
-          <Navbar.Brand href="#home">
-            <img src="/CMM_LOGO.png" alt="CMM Logo" width="80px" />
-          </Navbar.Brand>
-          <Nav className="ms-auto">
-            {navItem.map(function (a) {
+      <NavbarBS style={{ backgroundColor: "#1D2528" }} data-bs-theme="dark">
+        <ContainerBS fluid style={{ marginLeft: "60px", marginRight: "60px" }}>
+          <NavbarBS.Brand onClick={() => handleNavClick("Home")} type="button">
+            <img
+              src={process.env.PUBLIC_URL + "/CMM_LOGO.png"}
+              alt="CMM Logo"
+              width="80px"
+            />
+          </NavbarBS.Brand>
+          <NavBS variant="underline" className="ms-auto">
+            {navBarItems.map((navBarItem) => {
+              const itemName = navBarItem[0];
+              const itemLink = navBarItem[1];
               return (
-                <Nav.Link
-                  href={`#${a}`}
-                  className="nav-item"
+                <NavBS.Link
+                  onClick={() => handleNavClick(itemLink)}
                   style={{
-                    paddingRight: "30px",
+                    margin: "0px 10px",
                     fontSize: "20px",
                   }}
                 >
-                  {`${a}`}
-                </Nav.Link>
+                  <span>{itemName}</span>
+                </NavBS.Link>
               );
             })}
-          </Nav>
-        </Container>
-      </Navbar>
+          </NavBS>
+        </ContainerBS>
+      </NavbarBS>
     </>
   );
 }
 
-export default Mynav;
+export default NavBar;
