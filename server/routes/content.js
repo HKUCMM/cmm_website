@@ -32,7 +32,7 @@ const sessionStore = new MySQLStore({
     store: sessionStore
   }));
 
-  
+
 /**
  * @swagger
  * /upload-post:
@@ -180,7 +180,7 @@ router.get('/view-all-post', async (req, res) => {
 router.get('/view-post/:post_id', async (req, res) => {
     var postId = req.params.post_id;
 
-    var query = 'SELECT content FROM posts WHERE post_id = ?';
+    var query = 'SELECT P.title, P.num_of_likes, P.time_created, CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author, P.content FROM posts P JOIN members M ON P.author_id = M.member_id WHERE post_id = ?';
     db.query(query, [postId], function(err, results) {
         if (err) {
             console.error('Error fetching post', err);
@@ -195,7 +195,7 @@ router.get('/view-post/:post_id', async (req, res) => {
 
         var markdownContent = results[0].content;
         console.log(markdownContent);
-        res.send(markdownContent);
+        res.json(results);
     });
 });
 
