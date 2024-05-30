@@ -6,9 +6,80 @@ const pathname = path.join(__dirname, '../');
 const { db } = require(pathname + "database/mysql");
 const session = require('express-session');
 
+// Middleware to enable session handling
+router.use(session({
+  secret: 'yourSecretKey',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set to true if using HTTPS
+}));
+
+const pbkdf2_iterations = 10371;
+
+function checkPassword(userPassword, userSalt, passwordAttempt) {
+  const hash = crypto.createHash('sha512');
+  hash.update(passwordAttempt + userSalt);
+
+  return (hash.digest('hex') === userPassword);
+}
+
+function createHash(userPassword) {
+  const hash = crypto.createHash('sha512');
+  hash.update(userPassword);
+
+  return (hash.digest('hex'));
+}
+
 router.get('/', (req, res) => {
   res.redirect('/login');
 })
+
+/**
+ * @swagger
+ * /session:
+ *   get:
+ *     summary: Retrieves session data
+ *     description: Returns JSON containing session information, including user ID and email if the user is logged in.
+ *     responses:
+ *       200:
+ *         description: Session data retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isLoggedIn:
+ *                   type: boolean
+ *                   description: Indicates whether the user is currently logged in.
+ *                 userId:
+ *                   type: string
+ *                   description: The unique identifier of the logged-in user.
+ *                 email:
+ *                   type: string
+ *                   description: The email address of the logged-in user.
+ *       401:
+ *         description: Unauthorized. User is not logged in.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isLoggedIn:
+ *                   type: boolean
+ *                   description: Indicates that the user is not logged in.
+ */
+router.get('/session', (req, res) => {
+  // Check if the user is logged in
+  if (req.session.userId) {
+    res.json({
+      isLoggedIn: true,
+      userId: req.session.userId,
+      email: req.session.email
+    });
+  } else {
+    res.json({ isLoggedIn: false });
+  }
+});
 
 /**
  * @swagger
@@ -17,71 +88,54 @@ router.get('/', (req, res) => {
  *    post:
  *      tags:
  *        - user
- *      description: User signup
+ *      description: Change Password
  *      parameters:
  *      - in: body
  *        name: body
  *        required: true
  *        schema:
  *          properties:
- *            signupEmail:
+ *            userId:
+ *              type: int
+ *            newPassword:
  *              type: string
- *            signupFirstName:
- *              type: string
- *            signupLastName:
- *              type: string
- *            signupPassword:
- *              type: string
- *            signupTeamNo:
- *              type: integer
- *            isAdmin:
- *              type: boolean
  *      responses:
  *        200:
- *          description: signup successful
+ *          description: password change successful
  *          schema:
  *            properties:
  *              message:
  *                type: string
  *        401:
- *          description: user already exists
+ *          description: password change unsuccessful
  *          schema:
  *            properties:
  *              message:
  *                type: string
  */
-router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
-    var signupEmail = req.body.signupEmail;
-    var signupFirstName = req.body.signupFirstName;
-    var signupLastName = req.body.signupLastName;
-    var signupPassword = req.body.signupPassword;
-    var signupTeamNo = req.body.signupTeamNo;
-    var isAdmin = req.body.isAdmin;
+//based on session userId variable, delete the old passowrd (provided by admin), update hashed password
+router.post('/changepw', express.urlencoded({ extended: true }), async (req, res) => {
+  const newPassword = req.body.newPassword;
+  const queryA = `SELECT salt FROM members WHERE member_id = ? `;
 
-    var duplicateEmailQuery = "SELECT * FROM members WHERE email = ?"
-    //var duplicateNameQuery = "SELECT * FROM USERS WHERE NAME = ?";
-    
-    db.query(duplicateEmailQuery, [signupEmail], function(err, emailResults){
-        if(err){
-            console.log(err);
-            return;
-        }
-        if(emailResults.length > 0){
-            res.send("An account with the same email already exists. Please login with your email");
+  db.query(queryA, [req.session.userId], function (err, results) {
+    if (err) {
+      res.status(404).send();
+    } else {
+      const userSalt = results[0].salt;
+      const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ?`;
+      db.query(queryB, [createHash(newPassword + userSalt), req.body.userId], function (err, results) {
+        if (err) {
+          res.status(401).send();
         } else {
-            
-          var user = "INSERT INTO members (`name.first`, `name.last`, email, password, is_admin, team_id) VALUES (?, ?, ?, ?, ?, ?);";
-          db.query(user, [signupFirstName, signupLastName, signupEmail, signupPassword, isAdmin, signupTeamNo], function(err, result) {
-              if (err) {
-                  console.error('Error inserting record:', err);
-                  res.status(500).send();
-              } else {
-                  res.status(200).send();
-              }
-          });
-        } 
-    }); 
-})
+          res.status(200).send('updated successfully');
+        }
+      });
+
+    }
+  });
+});
+
 
 /**
  * @swagger
@@ -116,26 +170,40 @@ router.post('/signup', express.urlencoded({ extended: true }), (req,res) =>{
  *                type: string
  */
 
-router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
-  var loginEmail = req.body.loginEmail;
-  var loginPw = req.body.loginPW;
-  var query = `SELECT email, password, member_id FROM members WHERE email = ?`;
+router.post('/login', express.urlencoded({ extended: true }), async (req, res) => {
+  const loginEmail = req.body.loginEmail;
+  const loginPassword = req.body.loginPassword;
 
-  db.query(query, [loginEmail], function (err, results) {
-      if (err) {
-          console.log(err);
-          return;
-      }
-      if (!results && results[0].password == loginPw && results[0].email == loginEmail) {
-          req.session.email = loginEmail;
-          req.session.userId = results.member_id;
-          res.status(200).send();
-          return;
-      }
+  // Proceed with the main login check if the first login check passes without redirect
+  const query = `SELECT member_id, \`name.first\`, \`name.last\`, email, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
+  try {
+    const resultsB = await new Promise((resolve, reject) => {
+      db.query(query, [loginEmail], function (err, results) {
+        if (err) reject(err);
+        else resolve(results);
+      });
+    });
 
-      res.status(401).send();
-  });
+    if (resultsB.length === 0) {
+      res.status(401).send('No user found');
+      return;
+    }
+
+    const verified = checkPassword(resultsB[0].hashed_password, resultsB[0].salt, loginPassword);
+
+    if (verified) {
+      req.session.email = loginEmail;
+      req.session.userId = resultsB[0].member_id;
+      res.status(200).send('login successful');
+    } else {
+      res.status(401).send('login info incorrect');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send();
+  }
 });
+
 
 
 /**
@@ -155,10 +223,10 @@ router.post('/login', express.urlencoded({ extended: true }), (req, res) => {
 router.get('/logout', (req, res) => {
   req.session.loginName = null;
   req.session.userId = null;
-  if(!req.session.loginEmail){
+  if (!req.session.loginEmail) {
     res.status(200).send();
   }
-  else{
+  else {
     res.status(404).send();
   }
   //res.redirect('/');
