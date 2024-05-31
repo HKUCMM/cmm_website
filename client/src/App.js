@@ -6,21 +6,23 @@ import Login from "./routes/Login.js";
 import Mynav from "./components/Navbar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "./components/Footer.js";
+import Post from "./routes/Post.js";
 
 function App() {
-	return (
-		<BrowserRouter>
-			<Mynav />
-			<div>
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/about" element={<About />} />
-					<Route path="/login" element={<Login />} />
-				</Routes>
-			</div>
-			<Footer />
-		</BrowserRouter>
-	);
+  return (
+    <BrowserRouter>
+      <Mynav />
+      <div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/post" element={<Post />} />
+        </Routes>
+      </div>
+      <Footer />
+    </BrowserRouter>
+  );
 }
 
 export default App;
