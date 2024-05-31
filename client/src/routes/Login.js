@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../style/login.css";
-import axios from "axios";
+// import axios from "axios";
 
 const Login = () => {
   const [inputFields, setInputFields] = useState({
@@ -40,28 +40,29 @@ const Login = () => {
     setSubmitting(true);
   };
 
-  const handleAPI = (inputValues) => {
-    let errors = {};
-    axios
-      .get(`${process.env.REACT_APP_API_URL}`)
-      .then((result) => {
-        result.data.map((user) => {
-          if (user.loginEmail === inputValues.email) {
-            if (user.loginPW === inputValues.password) {
-              console.log("Login successfully");
-            } else {
-              errors.password = "Wrong Password";
-              errors.wrongPassword = "Wrong Password";
-            }
-          } else if (inputFields.email !== "") {
-            errors.email = "Wrong email";
-            errors.nonexistEmail = "Wrong email";
-          }
-        });
-        return errors;
-      })
-      .catch((err) => console.log(err));
-  };
+  // const handleAPI = (inputValues) => {
+  //   let errors = {};
+  //   axios
+  //     .get(`${process.env.REACT_APP_API_URL}`)
+  //     .then((result) => {
+  //       result.data.map((user) => {
+  //         if (user.loginEmail === inputValues.email) {
+  //           if (user.loginPW === inputValues.password) {
+  //             console.log("Login successfully");
+  //           } else {
+  //             errors.password = "Wrong Password";
+  //             errors.wrongPassword = "Wrong Password";
+  //           }
+  //         } else if (inputFields.email !== "") {
+  //           console.log("dddd");
+  //           errors.email = "Wrong email";
+  //           errors.nonexistEmail = "Wrong email";
+  //         }
+  //       });
+  //       return errors;
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   const finishSubmit = () => {
     console.log(inputFields);
