@@ -5,9 +5,6 @@ var pathname = path.join(__dirname, '../');
 const { db } = require(pathname + "database/mysql");
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
-
 
 const sessionStore = new MySQLStore({
     clearExpired: true,

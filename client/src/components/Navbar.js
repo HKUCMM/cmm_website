@@ -1,14 +1,46 @@
-import { Link } from "react-router-dom";
+import { Navbar as NavbarBS, Container as ContainerBS, Nav as NavBS } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-function Navbar()
-{
-    return (
-        <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-            <Link to="/login">Login</Link>
-        </nav>
-    )
+function NavBar() {
+  const navBarItems = [["ABOUT", "about"], ["PROJECT", "projects"], ["NOTICE", "projects"], ["CONTACT US", "contacts"], ["LOG IN", "login"]]; // navBarItems[0]: name, navBarItems[1]: link
+
+  const navigate = useNavigate();
+  const handleNavClick = (path) => {
+    navigate(`${path}`);
+  };
+
+  return (
+    <>
+      <NavbarBS style={{ backgroundColor: "#1D2528" }} data-bs-theme="dark">
+        <ContainerBS fluid style={{ marginLeft: "60px", marginRight: "60px" }}>
+          <NavbarBS.Brand onClick={() => handleNavClick("Home")} type="button">
+            <img
+              src={process.env.PUBLIC_URL + "/CMM_LOGO.png"}
+              alt="CMM Logo"
+              width="80px"
+            />
+          </NavbarBS.Brand>
+          <NavBS variant="underline" className="ms-auto">
+            {navBarItems.map((navBarItem) => {
+              const itemName = navBarItem[0];
+              const itemLink = navBarItem[1];
+              return (
+                <NavBS.Link
+                  onClick={() => handleNavClick(itemLink)}
+                  style={{
+                    margin: "0px 10px",
+                    fontSize: "20px",
+                  }}
+                >
+                  <span>{itemName}</span>
+                </NavBS.Link>
+              );
+            })}
+          </NavBS>
+        </ContainerBS>
+      </NavbarBS>
+    </>
+  );
 }
 
-export default Navbar;
+export default NavBar;
