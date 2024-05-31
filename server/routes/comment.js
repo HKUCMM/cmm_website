@@ -59,6 +59,10 @@ router.use(session({
  *                   description: Number of likes on the post.
  */
 router.get('/get-comments/:post_id', express.urlencoded({ extended: true}), async (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
+    
     var postId = req.params.post_id;
     var commentsQuery = 'SELECT DATE_FORMAT(C.time_created, \'%Y-%m-%d %H:%i:%s\') AS time_created, C.content , CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author FROM comments C JOIN members M ON  C.commenter_id = M.member_id WHERE post_id = ?';
     var likesQuery = `
