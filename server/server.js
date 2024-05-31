@@ -25,7 +25,7 @@ app.use('/', user_router);
 app.use('/', content_router);
 app.use('/', comment_router);
 
-var server = app.listen(port, () => {
+var server = app.listen(process.env.PORT, () => {
   var host = server.address().address;
   var port = server.address().port;
   console.log("Example app listening at http://%s:%s", host, port);
