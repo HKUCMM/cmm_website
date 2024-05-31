@@ -203,8 +203,6 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
   }
 });
 
-
-
 /**
  * @swagger
  * paths:
@@ -228,7 +226,7 @@ router.get('/logout', (req, res) => {
   else {
     res.status(404).send();
   }
-  //res.redirect('/');
+  res.redirect('/');
 })
 
 module.exports = router;

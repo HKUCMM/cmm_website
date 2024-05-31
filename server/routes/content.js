@@ -64,7 +64,7 @@ router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) =
     }
 
     var title = req.body.title;
-    var content = req.body.content; // URL of the Markdown file in S3
+    var content = req.body.content;
     var authorID = req.session.userId;
 
     var post = 'INSERT INTO posts (title, content, num_of_likes, time_created, author_id) VALUES (?, ?, ?, NOW(), ?)';
@@ -123,11 +123,11 @@ router.get('/view-all-post', async (req, res) => {
     }
     const query = `
         SELECT 
-            posts.post_id,
+            posts.post_id AS postId,
             posts.title,
-            posts.time_created AS date,
+            DATE_FORMAT(posts.time_created, \'%Y-%m-%d %H:%i:%s\') AS date,
             CONCAT(M.\`name.first\`, ' ', M.\`name.last\`)  AS author,
-            posts.num_of_likes,
+            posts.num_of_likes AS numOfLikes,
             COUNT(comments.comment_id) AS numOfcomments
         FROM 
             posts
@@ -179,14 +179,14 @@ router.get('/view-all-post', async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/view-post/:post_id', async (req, res) => {
+router.get('/view-post/:postId', async (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).send('Unauthorized');
     }
 
-    var postId = req.params.post_id;
+    var postId = req.params.postId;
 
-    var query = 'SELECT P.title, P.num_of_likes, P.time_created, CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author, P.content FROM posts P JOIN members M ON P.author_id = M.member_id WHERE post_id = ?';
+    var query = 'SELECT P.title, P.num_of_likes AS numOfLikes, P.time_created AS timeCreated, CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author, P.content FROM posts P JOIN members M ON P.author_id = M.member_id WHERE post_id = ?';
     db.query(query, [postId], function(err, results) {
         if (err) {
             console.error('Error fetching post', err);
@@ -199,8 +199,6 @@ router.get('/view-post/:post_id', async (req, res) => {
             return;
         }
 
-        var markdownContent = results[0].content;
-        console.log(markdownContent);
         res.json(results);
     });
 });
@@ -215,7 +213,7 @@ router.get('/view-post/:post_id', async (req, res) => {
  *       - Posts
  *     parameters:
  *       - in: path
- *         name: post_id
+ *         name: postId
  *         required: true
  *         schema:
  *           type: integer
@@ -243,17 +241,17 @@ router.get('/view-post/:post_id', async (req, res) => {
  *       500:
  *         description: Server error when trying to update the post
  */
-router.put('/edit-post/:post_id', express.urlencoded({ extended: true }), (req, res) => {
+router.put('/edit-post/:postId', express.urlencoded({ extended: true }), (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).send('Unauthorized');
     }
     const userId = req.session.userId;
 
-    var postId = req.params.post_id;
+    var postId = req.params.postId;
     var title = req.body.title;
     var editedContent = req.body.content;
     
-    const authQuery = 'SELECT author_id FROM posts WHERE post_id = ?';
+    const authQuery = 'SELECT author_id AS authorId FROM posts WHERE post_id = ?';
     db.query(authQuery, [postId], (err, results) => {
         if (err) {
             console.error('Error checking post authorization', err);
@@ -262,7 +260,7 @@ router.put('/edit-post/:post_id', express.urlencoded({ extended: true }), (req, 
         if (results.length === 0) {
             return res.status(404).send('Post not found');
         }
-        if (results[0].author_id !== userId) {
+        if (results[0].authorId !== userId) {
             return res.status(401).send('Unauthorized to edit this post');
         }
 
@@ -308,16 +306,16 @@ router.put('/edit-post/:post_id', express.urlencoded({ extended: true }), (req, 
  *       500:
  *         description: Server error when trying to delete the post
  */
-router.delete('/delete-post/:post_id', express.urlencoded({ extended: true }), (req, res) => {
+router.delete('/delete-post/:postId', express.urlencoded({ extended: true }), (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).send('Unauthorized');
     }
 
-    const postId = req.params.post_id;
+    const postId = req.params.postId;
     const userId = req.session.userId;
 
     // Check if the user is the author of the post or an admin
-    const queryCheck = 'SELECT author_id FROM posts WHERE post_id = ?';
+    const queryCheck = 'SELECT author_id AS authorId FROM posts WHERE post_id = ?';
     db.query(queryCheck, [postId], (err, results) => {
         if (err) {
             console.error('Error fetching post', err);
@@ -330,7 +328,7 @@ router.delete('/delete-post/:post_id', express.urlencoded({ extended: true }), (
             return;
         }
 
-        if (results[0].author_id !== userId /* && !user.isAdmin */) {
+        if (results[0].authorId !== userId) {
             res.status(403).send('You do not have permission to delete this post');
             return;
         }
