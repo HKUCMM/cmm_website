@@ -17,19 +17,17 @@ router.use(session({
 const pbkdf2_iterations = 10371;
 
 function checkPassword(userPassword, userSalt, passwordAttempt) {
-  //const hashedPasswordAttempt = key.toString('hex');
-  //console.log(key);
   const hash = crypto.createHash('sha512');
-  hash.update(passwordAttempt+userSalt);
-  
-  return(hash.digest('hex') === userPassword);
+  hash.update(passwordAttempt + userSalt);
+
+  return (hash.digest('hex') === userPassword);
 }
 
-function createHash(userPassword){
+function createHash(userPassword) {
   const hash = crypto.createHash('sha512');
   hash.update(userPassword);
 
-  return(hash.digest('hex'));
+  return (hash.digest('hex'));
 }
 
 router.get('/', (req, res) => {
@@ -90,34 +88,26 @@ router.get('/session', (req, res) => {
  *    post:
  *      tags:
  *        - user
- *      description: User signup
+ *      description: Change Password
  *      parameters:
  *      - in: body
  *        name: body
  *        required: true
  *        schema:
  *          properties:
- *            signupEmail:
+ *            userId:
+ *              type: int
+ *            newPassword:
  *              type: string
- *            signupFirstName:
- *              type: string
- *            signupLastName:
- *              type: string
- *            signupPassword:
- *              type: string
- *            signupTeamNo:
- *              type: integer
- *            isAdmin:
- *              type: boolean
  *      responses:
  *        200:
- *          description: signup successful
+ *          description: password change successful
  *          schema:
  *            properties:
  *              message:
  *                type: string
  *        401:
- *          description: user already exists
+ *          description: password change unsuccessful
  *          schema:
  *            properties:
  *              message:
@@ -125,21 +115,19 @@ router.get('/session', (req, res) => {
  */
 //based on session userId variable, delete the old passowrd (provided by admin), update hashed password
 router.post('/changepw', express.urlencoded({ extended: true }), async (req, res) => {
-  var newPassword = req.body.newPassword;
-  var queryA = `SELECT salt FROM members WHERE member_id = ? `;
-  var userSalt = '';
-  db.query(queryA, [req.session.userId], function(err, results){
-    if (err){
+  const newPassword = req.body.newPassword;
+  const queryA = `SELECT salt FROM members WHERE member_id = ? `;
+
+  db.query(queryA, [req.session.userId], function (err, results) {
+    if (err) {
       res.status(404).send();
-    } else{
-      console.log(results[0]);
-      userSalt = results[0].salt;
-      
-      var queryB = `UPDATE members SET hashed_password = ?, password = null WHERE member_id = ?`;
-      db.query(queryB, [createHash(newPassword+userSalt), req.body.userId], function(err, results){
-        if (err){
+    } else {
+      const userSalt = results[0].salt;
+      const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ?`;
+      db.query(queryB, [createHash(newPassword + userSalt), req.body.userId], function (err, results) {
+        if (err) {
           res.status(401).send();
-        } else{
+        } else {
           res.status(200).send('updated successfully');
         }
       });
@@ -183,33 +171,14 @@ router.post('/changepw', express.urlencoded({ extended: true }), async (req, res
  */
 
 router.post('/login', express.urlencoded({ extended: true }), async (req, res) => {
-  var loginEmail = req.body.loginEmail;
-  var loginPassword = req.body.loginPassword;
-  // First, check whether it is the first login, if true, redirect to changepw endpoint
-  var queryA = `SELECT password FROM members WHERE email = ?`;
-  try {
-    const resultsA = await new Promise((resolve, reject) => {
-      db.query(queryA, [loginEmail], function(err, results) {
-        if (err) reject(err);
-        else resolve(results);
-      });
-    });
-
-    if (resultsA.length > 0 && resultsA[0].password === null) {
-      res.redirect('/changepw');
-      return;
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(404).send();
-    return;
-  }
+  const loginEmail = req.body.loginEmail;
+  const loginPassword = req.body.loginPassword;
 
   // Proceed with the main login check if the first login check passes without redirect
-  var queryB = `SELECT member_id, \`name.first\`, \`name.last\`, email, password, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
+  const query = `SELECT member_id, \`name.first\`, \`name.last\`, email, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
   try {
     const resultsB = await new Promise((resolve, reject) => {
-      db.query(queryB, [loginEmail], function(err, results) {
+      db.query(query, [loginEmail], function (err, results) {
         if (err) reject(err);
         else resolve(results);
       });
@@ -219,7 +188,7 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
       res.status(401).send('No user found');
       return;
     }
-    console.log(resultsB[0].hashed_password, loginPassword)
+
     const verified = checkPassword(resultsB[0].hashed_password, resultsB[0].salt, loginPassword);
 
     if (verified) {
@@ -230,7 +199,6 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
       res.status(401).send('login info incorrect');
     }
   } catch (err) {
-    console.error(err);
     res.status(500).send();
   }
 });
@@ -254,10 +222,10 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
 router.get('/logout', (req, res) => {
   req.session.loginName = null;
   req.session.userId = null;
-  if(!req.session.loginEmail && !req.session.userId){
+  if (!req.session.loginEmail && !req.session.userId) {
     res.status(200).send();
   }
-  else{
+  else {
     res.status(404).send();
   }
   //res.redirect('/');
