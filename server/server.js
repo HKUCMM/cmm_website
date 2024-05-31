@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
 const { swaggerUi, specs } = require('./modules/swagger');
-var userRouter = require('./routes/user');
-var contentRouter = require('./routes/content');
-var commentRouter = require('./routes/comment');
+var user_router = require('./routes/user');
+var content_router = require('./routes/content')
+var comment_router = require('./routes/comment')
+//var display_router = require('./routes/display');
 var session = require('express-session');
 require('dotenv').config();
 
@@ -20,14 +21,12 @@ app.use(
 );
 
 app.use(express.json());
-app.use('/', userRouter);
-app.use('/', contentRouter);
-app.use('/', commentRouter);
-
-const port = process.env.PORT;
+app.use('/', user_router);
+app.use('/', content_router);
+app.use('/', comment_router);
 
 var server = app.listen(port, () => {
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log("Example app listening at http://%s:%s", host, port);
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log("Example app listening at http://%s:%s", host, port);
 })
