@@ -1,0 +1,33 @@
+.middle-section {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    height: 70vh; 
+    background-size: cover;
+    background-position: center;
+    background-color: #1d2528;
+    color: white;
+    text-align: center;
+    padding-left: 50px
+    
+  }
+  
+  .content {
+    max-width: 1000px;
+    text-align: left;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .content h1 {
+    font-size: 7em;
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  .content h2 {
+    font-size: 3em;
+    margin: 0.2em 0;
+    letter-spacing: 0.1em;
+  }
+  
