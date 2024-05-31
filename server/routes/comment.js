@@ -45,18 +45,24 @@ router.use(session({
  *     responses:
  *       200:
  *         description: A list of comments.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 comments:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Comment'
- *                 likes:
- *                   type: integer
- *                   description: Number of likes on the post.
+ *         schema:
+ *           properties:
+ *             comments:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Comment'
+ *             likes:
+ *               type: integer
+ *               description: Number of likes on the post.
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Internal server error
+ *         schema:
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: "An error occurred while retrieving the comments."
  */
 router.get('/get-comments/:postId', express.urlencoded({ extended: true }), async (req, res) => {
     if (!req.session || !req.session.userId) {

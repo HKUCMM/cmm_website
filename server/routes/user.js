@@ -84,7 +84,7 @@ router.get('/session', (req, res) => {
 /**
  * @swagger
  * paths:
- *  /signup:
+ *  /changepw:
  *    post:
  *      tags:
  *        - user
@@ -96,7 +96,7 @@ router.get('/session', (req, res) => {
  *        schema:
  *          properties:
  *            userId:
- *              type: int
+ *              type: integer
  *            newPassword:
  *              type: string
  *      responses:

@@ -32,15 +32,16 @@ const sessionStore = new MySQLStore({
 
 /**
  * @swagger
- * /upload-post:
- *   post:
- *     summary: Upload a new post
- *     tags: 
- *       - Posts
- *     requestBody:
- *       required: true
- *       content:
- *         application/x-www-form-urlencoded:
+ * paths:
+ *   /upload-post:
+ *     post:
+ *       tags:
+ *         - Posts
+ *       description: Upload a new post
+ *       parameters:
+ *         - in: body
+ *           name: body
+ *           required: true
  *           schema:
  *             type: object
  *             properties:
@@ -50,13 +51,13 @@ const sessionStore = new MySQLStore({
  *                 example: "My New Post"
  *               content:
  *                 type: string
- *                 description: The URL of the Markdown file in S3
- *                 example: "https://s3.amazonaws.com/mybucket/myfile.md"
- *     responses:
- *       200:
- *         description: Post uploaded successfully
- *       500:
- *         description: Internal server error
+ *                 description: The content of the post
+ *                 example: "Hello world"
+ *       responses:
+ *         200:
+ *           description: Post uploaded successfully
+ *         500:
+ *           description: Internal server error
  */
 router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) => {
     if (!req.session || !req.session.userId) {
@@ -80,42 +81,43 @@ router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) =
 
 /**
  * @swagger
- * /view-all-post:
- *   get:
- *     summary: Retrieve all posts along with their authors and comment counts
- *     tags: 
- *       - Posts
- *     responses:
- *       200:
- *         description: A list of posts
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   post_id:
- *                     type: integer
- *                     example: 1
- *                   title:
- *                     type: string
- *                     example: "First Post"
- *                   date:
- *                     type: string
- *                     format: date-time
- *                     example: "2024-05-30T12:34:56Z"
- *                   author:
- *                     type: string
- *                     example: "John Doe"
- *                   num_of_likes:
- *                     type: integer
- *                     example: 10
- *                   numOfcomments:
- *                     type: integer
- *                     example: 5
- *       500:
- *         description: Internal server error
+ * paths:
+ *   /view-all-post:
+ *     get:
+ *       tags:
+ *         - Posts
+ *       description: Retrieve all posts along with their authors and comment counts
+ *       responses:
+ *         200:
+ *           description: A list of posts
+ *           schema:
+ *             properties:
+ *               postId:
+ *                 type: integer
+ *                 example: 1
+ *               title:
+ *                 type: string
+ *                 example: "First Post"
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-05-30T12:34:56Z"
+ *               author:
+ *                 type: string
+ *                 example: "John Doe"
+ *               numOfLikes:
+ *                 type: integer
+ *                 example: 10
+ *               numOfComments:
+ *                 type: integer
+ *                 example: 5
+ *         500:
+ *           description: Internal server error
+ *           schema:
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 example: "An error occurred while retrieving posts."
  */
 router.get('/view-all-post', async (req, res) => {
     if (!req.session || !req.session.userId) {
@@ -169,15 +171,20 @@ router.get('/view-all-post', async (req, res) => {
  *     responses:
  *       200:
  *         description: The content of the post in markdown format
- *         content:
- *           text/plain:
- *             schema:
+ *         schema:
+ *           properties:
+ *             content:
  *               type: string
  *               example: "# My Post\nThis is the content of the post."
  *       404:
  *         description: Post not found
  *       500:
  *         description: Internal server error
+ *         schema:
+ *           properties:
+ *             message:
+ *               type: string
+ *               example: "An error occurred while retrieving the post."
  */
 router.get('/view-post/:postId', async (req, res) => {
     if (!req.session || !req.session.userId) {
