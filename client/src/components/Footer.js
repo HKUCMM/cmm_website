@@ -6,7 +6,6 @@ const FooterBox = styled.div`
 `;
 
 const TopBox = styled.div`
-  border-top: 2px solid #ffffff;
   height: 312px;
   top: 832px;
   display: flex;
@@ -56,7 +55,7 @@ const Copyright = styled.div`
   line-height: 24px;
   letter-spacing: 0em;
   text-align: center;
-  border-top: 2px solid #ffffff;
+  border-top: 1px solid silver;
   display: flex;
   flex-direction: column;
   align-items: center;
