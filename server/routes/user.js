@@ -222,7 +222,7 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
 router.get('/logout', (req, res) => {
   req.session.loginName = null;
   req.session.userId = null;
-  if (!req.session.loginEmail) {
+  if (!req.session.loginEmail && !req.session.userId) {
     res.status(200).send();
   }
   else {
