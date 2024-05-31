@@ -77,8 +77,6 @@ router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) =
   });
 });
 
-
-
 /**
  * @swagger
  * /view-all-post:
