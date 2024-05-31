@@ -62,19 +62,23 @@ const sessionStore = new MySQLStore({
  *         description: Internal server error
  */
 router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) => {
-  var title = req.body.title;
-  var content = req.body.content; // URL of the Markdown file in S3
-  var authorID = req.session.userId;
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
 
-  var post = 'INSERT INTO posts (title, content, num_of_likes, time_created, author_id) VALUES (?, ?, ?, NOW(), ?)';
-  db.query(post, [title, content, 0, /**authorID */27], function(err, result) {
-      if (err) {
-          console.error('Error uploading post', err);
-          res.status(500).send();
-          return;
-      }
-      res.status(200).send();
-  });
+    var title = req.body.title;
+    var content = req.body.content; // URL of the Markdown file in S3
+    var authorID = req.session.userId;
+
+    var post = 'INSERT INTO posts (title, content, num_of_likes, time_created, author_id) VALUES (?, ?, ?, NOW(), ?)';
+    db.query(post, [title, content, 0, authorID], function(err, result) {
+        if (err) {
+            console.error('Error uploading post', err);
+            res.status(500).send();
+            return;
+        }
+        res.status(200).send();
+    });
 });
 
 /**
@@ -117,6 +121,9 @@ router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) =
  *         description: Internal server error
  */
 router.get('/view-all-post', async (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
     const query = `
         SELECT 
             posts.post_id,
@@ -176,6 +183,10 @@ router.get('/view-all-post', async (req, res) => {
  *         description: Internal server error
  */
 router.get('/view-post/:post_id', async (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
+
     var postId = req.params.post_id;
 
     var query = 'SELECT P.title, P.num_of_likes, P.time_created, CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author, P.content FROM posts P JOIN members M ON P.author_id = M.member_id WHERE post_id = ?';
@@ -197,24 +208,146 @@ router.get('/view-post/:post_id', async (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ * /edit-post/{post_id}:
+ *   put:
+ *     summary: Updates an existing post
+ *     description: Allows the user to update the title and content of their own post. The user must be logged in and must be the author of the post.
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: post_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the post to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/x-www-form-urlencoded:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The new title of the post
+ *               content:
+ *                 type: string
+ *                 description: The new content of the post
+ *     responses:
+ *       200:
+ *         description: Content updated successfully
+ *       401:
+ *         description: Unauthorized if user is not logged in or is not the author of the post
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error when trying to update the post
+ */
+router.put('/edit-post/:post_id', express.urlencoded({ extended: true }), (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
+    const userId = req.session.userId;
 
-// edit-post API: update the post with the given post_id with the new title and content
-router.put('/edit/:post_id', express.urlencoded({ extended: true }), (req, res) => {
     var postId = req.params.post_id;
     var title = req.body.title;
     var editedContent = req.body.content;
-    var query = 'UPDATE posts SET title = ?, content = ? WHERE post_id = ?';
-
-    db.query(query, [title, editedContent, postId], function (err, result) {
+    
+    const authQuery = 'SELECT author_id FROM posts WHERE post_id = ?';
+    db.query(authQuery, [postId], (err, results) => {
         if (err) {
-            console.error(err);
-            res.status(500).send("Error updating content");
-        } else {
-            res.status(200).send("Content updated successfully");
+            console.error('Error checking post authorization', err);
+            return res.status(500).send('Error checking post authorization');
         }
+        if (results.length === 0) {
+            return res.status(404).send('Post not found');
+        }
+        if (results[0].author_id !== userId) {
+            return res.status(401).send('Unauthorized to edit this post');
+        }
+
+        // Update post if the user is the author
+        const query = 'UPDATE posts SET title = ?, content = ? WHERE post_id = ?';
+        db.query(query, [title, editedContent, postId], function (err, result) {
+            if (err) {
+                console.error('Error updating post', err);
+                return res.status(500).send("Error updating content");
+            }
+            if (result.affectedRows === 0) {
+                return res.status(404).send('No post found or no changes made.');
+            }
+            res.status(200).send("Content updated successfully");
+        });
     });
 });
 
-// delete-post
+/**
+ * @swagger
+ * /delete-post/{post_id}:
+ *   delete:
+ *     summary: Deletes a post
+ *     description: Allows the user to delete their own post or an admin to delete any post. The operation requires the user to be logged in and, if not an admin, to be the author of the post.
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: post_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the post to delete
+ *     responses:
+ *       200:
+ *         description: Post deleted successfully
+ *       401:
+ *         description: Unauthorized if the user is not logged in
+ *       403:
+ *         description: Forbidden if the user is not the author or an admin
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error when trying to delete the post
+ */
+router.delete('/delete-post/:post_id', express.urlencoded({ extended: true }), (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    const postId = req.params.post_id;
+    const userId = req.session.userId;
+
+    // Check if the user is the author of the post or an admin
+    const queryCheck = 'SELECT author_id FROM posts WHERE post_id = ?';
+    db.query(queryCheck, [postId], (err, results) => {
+        if (err) {
+            console.error('Error fetching post', err);
+            res.status(500).send();
+            return;
+        }
+
+        if (results.length === 0) {
+            res.status(404).send('Post not found');
+            return;
+        }
+
+        if (results[0].author_id !== userId /* && !user.isAdmin */) {
+            res.status(403).send('You do not have permission to delete this post');
+            return;
+        }
+
+        const deleteQuery = 'DELETE FROM posts WHERE post_id = ?';
+        db.query(deleteQuery, [postId], (err, result) => {
+            if (err) {
+                console.error('Error deleting post', err);
+                res.status(500).send();
+                return;
+            }
+            res.status(200).send('Post deleted successfully');
+        });
+    });
+});
 
 module.exports = router;
