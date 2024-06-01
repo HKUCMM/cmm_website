@@ -104,7 +104,10 @@ router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) =
    *           properties:
    *             message:
    *               type: string
-   *               example: Post liked successfully
+   *               example: 
+   *                 oneOf:
+   *                   - Post liked successfully
+   *                   - Post disliked successfully
    *       401:
    *         description: Unauthorized - User is not logged in
    *         schema:
