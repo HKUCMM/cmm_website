@@ -1,0 +1,78 @@
+.box {
+  padding-top: 61px;
+}
+
+.profile {
+  width: 75px;
+  height: 75px;
+}
+
+.name {
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: left;
+  line-height: 40px;
+  color: #ffffff;
+}
+
+.date {
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 0px;
+  text-align: left;
+  color: #ffffffcc;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin-left: 10px;
+}
+
+.user {
+  display: flex;
+  margin-bottom: 21px;
+}
+
+.content {
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  color: #ffffff;
+}
+
+.line {
+  margin-top: 10px;
+  width: 846px;
+  border: 1px 0px 0px 0px;
+  border: 1px solid #ffffff80;
+}
+
+.component {
+  display: flex;
+  justify-content: space-between;
+}
+
+.like {
+  padding-top: 20px;
+  display: flex;
+}
+
+.likeimg {
+  width: 28px;
+  height: 28px;
+}
+
+.likecount {
+  padding-left: 5px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  text-align: center;
+  color: #ffffff;
+}

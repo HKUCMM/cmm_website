@@ -1,0 +1,66 @@
+.noticeBox {
+  padding-top: 42.5px;
+  padding-right: 235px;
+  width: 973px;
+  height: 134.5px;
+}
+
+.noticeSubBox {
+  display: flex;
+  position: relative;
+}
+
+.noticeTitle {
+  color: #fff;
+
+  font-family: "Titillium Web";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin-bottom: 2px;
+}
+
+.dateAuthor {
+  color: rgba(255, 255, 255, 0.6);
+
+  font-family: "Titillium Web";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 4px;
+}
+
+.likeMessage {
+  padding-top: 20px;
+  margin-left: auto; /* Push the item to the right */
+  position: absolute;
+  bottom: 8px;
+  right: 0px;
+}
+
+.likeImg,
+.messageImg {
+  width: 20px;
+  height: 20px;
+}
+
+.likeCount,
+.messageCount {
+  color: #fff;
+
+  font-family: "Titillium Web";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  padding: 2px;
+  vertical-align: top;
+}
+
+.noticeLine {
+  width: 862px;
+  height: 1.5px;
+  background: #fff;
+}

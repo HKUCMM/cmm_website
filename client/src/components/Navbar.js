@@ -1,8 +1,18 @@
-import { Navbar as NavbarBS, Container as ContainerBS, Nav as NavBS } from "react-bootstrap";
+import {
+  Navbar as NavbarBS,
+  Container as ContainerBS,
+  Nav as NavBS,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function NavBar() {
-  const navBarItems = [["ABOUT", "about"], ["PROJECT", "projects"], ["NOTICE", "projects"], ["CONTACT US", "contacts"], ["LOG IN", "login"]]; // navBarItems[0]: name, navBarItems[1]: link
+  const navBarItems = [
+    ["ABOUT", "about"],
+    ["PROJECT", "projects"],
+    ["NOTICE", "notice"],
+    ["CONTACT US", "contacts"],
+    ["LOG IN", "login"],
+  ]; // navBarItems[0]: name, navBarItems[1]: link
 
   const navigate = useNavigate();
   const handleNavClick = (path) => {
