@@ -6,16 +6,27 @@ import { useNavigate, useParams } from "react-router-dom";
 import remarkGfm from "remark-gfm";
 
 const Post = () => {
-  // const [content, setContent] = useState("");
-  // const handleChange = (e) => {
-  //   setContent({ ...content });
-  // };
+  const navigate = useNavigate();
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/session`, {
+      credentials: "include",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        if (!data.isLoggedIn) {
+          navigate("/");
+        }
+      })
+      .catch((err) => {});
+  }, []);
+
   const { postId } = useParams();
   const [loadingPost, setLoadingPost] = useState(true);
   const [loadingComments, setLoadingComments] = useState(true);
   const [postData, setPostData] = useState({});
   const [commentData, setCommentData] = useState();
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/view-post/${postId}`, {

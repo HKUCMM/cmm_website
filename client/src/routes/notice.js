@@ -1,8 +1,25 @@
 import "../css/notice.css";
 import Noticeboard from "../components/noticeboard";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Notice() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/session`, {
+      credentials: "include",
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        if (!data.isLoggedIn) {
+          navigate("/");
+        }
+      })
+      .catch((err) => {});
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [postsData, setPostsData] = useState();
 
