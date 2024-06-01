@@ -1,12 +1,51 @@
-import { Navbar as NavbarBS, Container as ContainerBS, Nav as NavBS } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import {
+  Navbar as NavbarBS,
+  Container as ContainerBS,
+  Nav as NavBS,
+  NavDropdown as NavDropdownBS,
+} from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-function NavBar() {
-  const navBarItems = [["PROJECTS", "projects"], ["NOTICE", "notice"], ["CONTACT US", "contacts"], ["LOG IN", "login"]]; // navBarItems[0]: name, navBarItems[1]: link
-
+function NavBar({ isLoggedIn, setIsLoggedIn }) {
+  const navBarItems = [
+    ["PROJECTS", "projects"],
+    ["NOTICE", "notice"],
+    ["CONTACT US", "contacts"],
+  ]; // navBarItems[0]: name, navBarItems[1]: link
   const navigate = useNavigate();
+
   const handleNavClick = (path) => {
     navigate(`${path}`);
+  };
+
+  // useEffect(() => {
+  //   console.log("calling api");
+  //   fetch(`${process.env.REACT_APP_API_URL}/session`, {
+  //     credentials: "include",
+  //   })
+  //     .then((res) => {
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       data.isLoggedIn ? setLoginStatus(true) : setLoginStatus(false);
+  //     })
+  //     .catch();
+  // }, []);
+
+  const handleLogout = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/logout`, {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          setIsLoggedIn(false);
+          localStorage.removeItem("name");
+          localStorage.removeItem("isAdmin");
+          navigate("/");
+        }
+      })
+      .catch();
   };
 
   return (
@@ -36,6 +75,24 @@ function NavBar() {
                 </NavBS.Link>
               );
             })}
+            {isLoggedIn ? (
+              <NavDropdownBS
+                title={`Hi ${localStorage.getItem("name")}`}
+                style={{ margin: "0px 10px", fontSize: "20px" }}
+              >
+                <NavDropdownBS.Item href="">PROFILE</NavDropdownBS.Item>
+                <NavDropdownBS.Item onClick={handleLogout}>
+                  LOGOUT
+                </NavDropdownBS.Item>
+              </NavDropdownBS>
+            ) : (
+              <NavBS.Link
+                onClick={() => handleNavClick("login")}
+                style={{ margin: "0px 10px", fontSize: "20px" }}
+              >
+                LOGIN
+              </NavBS.Link>
+            )}
           </NavBS>
         </ContainerBS>
       </NavbarBS>
