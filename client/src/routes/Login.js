@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/login.css";
 import "../css/mainpage.css";
 
 const Login = ({ setIsLoggedIn }) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("name") !== null) {
+      navigate("/");
+    }
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
@@ -13,9 +20,7 @@ const Login = ({ setIsLoggedIn }) => {
     password: "",
   });
   const [submitting, setSubmitting] = useState(false);
-
   const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-  const navigate = useNavigate();
 
   const validateValues = () => {
     let errorPresent = false;
@@ -39,6 +44,15 @@ const Login = ({ setIsLoggedIn }) => {
         };
       });
       errorPresent = true;
+    } else {
+      setErrors((prevState) => {
+        return {
+          ...prevState,
+          email: "",
+          emailEmpty: "",
+          emailInvalid: "",
+        };
+      });
     }
 
     if (password.length === 0) {
@@ -62,7 +76,8 @@ const Login = ({ setIsLoggedIn }) => {
     if (!validValues) {
       setSubmitting(false);
     } else {
-      return handleAPI();
+      handleAPI();
+      setSubmitting(false);
     }
   };
 
@@ -80,7 +95,7 @@ const Login = ({ setIsLoggedIn }) => {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Login Info Invalid");
+          throw res;
         }
         return res.json();
       })
@@ -93,7 +108,9 @@ const Login = ({ setIsLoggedIn }) => {
         navigate("/");
       })
       .catch((err) => {
-        return err;
+        setErrors((prevState) => {
+          return { ...prevState, password: "Login Info Invalid." };
+        });
       });
   };
 
@@ -134,7 +151,7 @@ const Login = ({ setIsLoggedIn }) => {
           }}
         ></input>
         {errors.password === "" || submitting ? null : (
-          <p className="errorPassword">Required field</p>
+          <p className="errorPassword">{errors.password}</p>
         )}
         {/* <p className="forget">Forgot Password?</p> 링크로 바꿔야 함 */}
         <button type="submit" className="loginButton">

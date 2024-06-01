@@ -1,9 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -14,7 +15,6 @@ var contentRouter = require("./routes/content");
 var commentRouter = require("./routes/comment");
 //var display_router = require('./routes/display');
 var session = require("express-session");
-require("dotenv").config();
 
 app.set("view engine", "ejs");
 
