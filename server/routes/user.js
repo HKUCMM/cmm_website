@@ -73,7 +73,6 @@ function createHash(userPassword) {
 router.get("/session", (req, res) => {
   // Check if the user is logged in
   if (req.session.userId) {
-    console.log(req.session.userId);
     res.json({
       isLoggedIn: true,
       userId: req.session.userId,

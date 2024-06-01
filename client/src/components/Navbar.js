@@ -19,20 +19,6 @@ function NavBar({ isLoggedIn, setIsLoggedIn }) {
     navigate(`${path}`);
   };
 
-  // useEffect(() => {
-  //   console.log("calling api");
-  //   fetch(`${process.env.REACT_APP_API_URL}/session`, {
-  //     credentials: "include",
-  //   })
-  //     .then((res) => {
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       data.isLoggedIn ? setLoginStatus(true) : setLoginStatus(false);
-  //     })
-  //     .catch();
-  // }, []);
-
   const handleLogout = () => {
     fetch(`${process.env.REACT_APP_API_URL}/logout`, {
       credentials: "include",
