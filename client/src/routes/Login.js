@@ -1,81 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useCookies } from 'react-cookie';
+import { useNavigate } from "react-router-dom";
 import "../css/login.css";
-// import axios from "axios";
+import "../css/mainpage.css"
 
 const Login = () => {
-  const [inputFields, setInputFields] = useState({
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({
     email: "",
-    password: "",
+    emailEmpty: "",
+    emailInvalid: "",
+    password: ""
   });
-  const [errors, setErrors] = useState({});
-  const [submitting, setSubmitting] = useState(false);
+  const [cookies, setCookies] = useCookies(["name", "isAdmin"]);
 
   const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  const navigate = useNavigate();
 
-  const validateValues = (inputValues) => {
-    let errors = {};
-    if (inputValues.email.length <= 0) {
-      errors.email = "Required field";
-      errors.emailEmpty = "Required field";
-    } else if (!inputValues.email.match(isValidEmail)) {
-      errors.email = "Invalid email address!";
-      errors.emailInvalid = "Invalid email address!";
+  const validateValues = () => {
+    let errorPresent = false;
+    if (email.length === 0) {
+      console.log("HI");
+      setErrors((prevState) => {
+        return { ...prevState, email: "Required field", emailEmpty: "Required field", emailInvalid: "" };
+      })
+      errorPresent = true;
+    } else if (!email.match(isValidEmail)) {
+      setErrors((prevState) => {
+        return { ...prevState, email: "Invalid email address!", emailEmpty: "", emailInvalid: "Invalid email address!" };
+      })
+      errorPresent = true;
     }
-    if (inputValues.password.length <= 0) {
-      errors.password = "Required field";
-    }
-    return errors;
-  };
 
-  const handleChange = (e) => {
-    setInputFields({ ...inputFields, [e.target.name]: e.target.value });
+    if (password.length === 0) {
+      setErrors((prevState) => {
+        return { ...prevState, password: "Required field" };
+      })
+      errorPresent = true;
+    }
+
+    return !errorPresent;
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setErrors(validateValues(inputFields));
-    // if (Object.keys(errors).length === 0) {
-    //   setErrors(handleAPI(inputFields));
-    // }
-    setSubmitting(true);
-  };
-
-  // const handleAPI = (inputValues) => {
-  //   let errors = {};
-  //   axios
-  //     .get(`${process.env.REACT_APP_API_URL}`)
-  //     .then((result) => {
-  //       result.data.map((user) => {
-  //         if (user.loginEmail === inputValues.email) {
-  //           if (user.loginPW === inputValues.password) {
-  //             console.log("Login successfully");
-  //           } else {
-  //             errors.password = "Wrong Password";
-  //             errors.wrongPassword = "Wrong Password";
-  //           }
-  //         } else if (inputFields.email !== "") {
-  //           console.log("dddd");
-  //           errors.email = "Wrong email";
-  //           errors.nonexistEmail = "Wrong email";
-  //         }
-  //       });
-  //       return errors;
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-
-  const finishSubmit = () => {
-    console.log(inputFields);
-  };
-
-  useEffect(() => {
-    if (Object.keys(errors).length === 0 && submitting) {
-      finishSubmit();
+    const validValues = validateValues();
+    if (!validValues) {
+      return console.log(errors);
+    } else {
+      return handleAPI();
     }
-  }, [errors]);
+  };
+
+  const handleAPI = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      method: "POST",
+      body: JSON.stringify({
+        loginEmail: email,
+        loginPassword: password,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => {
+      if (!res.ok) {
+        throw new Error("Login Info Invalid");
+      }
+      return res.json();
+    }).then((data) => {
+      const firstName = data.firstName;
+      const isAdmin = data.isAdmin;
+      let expires = new Date();
+      expires.setTime(expires.getTime() + 30 * 60 * 1000);
+      setCookies("name", firstName, { path: "/", expires });
+      setCookies("isAdmin", isAdmin, { path: "/", expires });
+      navigate("/");
+    }).catch((err) => {
+      console.log(err)
+      return err;
+    });
+  }
 
   return (
-    <div className="login">
+    <div className="banner login">
       <div className="leftBox">
         <span className="leftHeader">LOG IN</span>
         <span className="leftWelcome">Welcome to CMM!</span>
@@ -87,8 +95,8 @@ const Login = () => {
           type="text"
           name="email"
           placeholder="E-mail"
-          value={inputFields.email}
-          onChange={handleChange}
+          value={email}
+          onChange={(e) => { setEmail(e.target.value) }}
         ></input>
         {errors.emailEmpty ? (
           <p className="errorEmail">Required field</p>
@@ -101,17 +109,15 @@ const Login = () => {
           type="password"
           name="password"
           placeholder="Password"
-          value={inputFields.password}
-          onChange={handleChange}
+          value={password}
+          onChange={(e) => { setPassword(e.target.value) }}
         ></input>
         {errors.password ? (
           <p className="errorPassword">Required field</p>
         ) : null}
-        <p className="forget">Forgot Password?</p> {/* 링크로 바꿔야 함 */}
-        <button className="loginButton">Login</button>{" "}
-        {/* 누르면 sign up 페이지로 */}
+        {/* <p className="forget">Forgot Password?</p> 링크로 바꿔야 함 */}
+        <button type="submit" className="loginButton">Login</button>
         <p className="signup">Don't have an account? Sign Up</p>{" "}
-        {/* 링크로 바꿔야 함 */}
       </form>
     </div>
   );

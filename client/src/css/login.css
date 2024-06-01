@@ -3,8 +3,7 @@
   padding-top: 112px;
   padding-left: 70px;
   padding-right: 159px;
-  height: 710px;
-  background: #1d2528;
+  height: calc(100vh - 106px - 331px);
   display: flex;
   align-items: top;
   justify-content: space-between;
@@ -45,6 +44,7 @@
 }
 
 .rightHeader {
+  color: #1d2528;
   margin: 38px;
   font-family: Titillium Web;
   font-size: 32px;
@@ -74,7 +74,6 @@
 
 .falseInput {
   padding-left: 11px;
-  margin-bottom: 24px;
   border: 1.5px solid #dd0000;
   width: 388px;
   height: 52px;
@@ -92,9 +91,8 @@
 }
 
 .errorEmail {
-  position: absolute;
-  top: 293px;
   margin: 0px;
+  margin-bottom: 12px;
   align-items: left;
   width: 388px;
   height: 18px;
@@ -106,8 +104,6 @@
 }
 
 .errorPassword {
-  position: absolute;
-  top: 373px;
   margin: 0px;
   align-items: left;
   width: 388px;

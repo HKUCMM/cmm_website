@@ -30,14 +30,21 @@ function Test() {
             headers: {
                 'Content-Type': 'application/json',
             },
+        }).then((res) => {
+            return res.json();
+        }).then((data) => {
+            console.log(data.firstName);
+            console.log(data.lastName);
+            console.log(data.isAdmin);
+        }).catch((err) => {
+            console.log("error while logging in.")
         })
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
     };
 
     const getSession = () => {
         fetch("/session")
             .then((res) => {
+                console.log(res);
                 return res.json();
             })
             .then((data) => {
