@@ -1,9 +1,11 @@
 import "../css/post.css";
 import Comment from "../components/Comment";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Post = () => {
   const [content, setContent] = useState("");
+
   const handleChange = (e) => {
     setContent(e.target.value);
   };
@@ -13,12 +15,21 @@ const Post = () => {
     setContent("");
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="background">
       <div className="SubBackground">
         <div className="components">
-          <img className="icon" src="/toBackImg.png" alt="Back" />
-          <p className="text">뒤로가기</p>
+          <img
+            className="icon"
+            src="/toBackImg.png"
+            alt="Back"
+            onClick={() => navigate(-1)}
+          />
+          <p className="text" onClick={() => navigate(-1)}>
+            뒤로가기
+          </p>
         </div>
         <p className="title">CMM 학회 웹사이트 이용안내</p>
         <p className="date">
