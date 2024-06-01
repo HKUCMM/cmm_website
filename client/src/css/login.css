@@ -1,8 +1,8 @@
 .login {
   position: relative;
   padding-top: 112px;
-  padding-left: 70px;
-  padding-right: 159px;
+  padding-left: 350px;
+  padding-right: 350px;
   height: calc(100vh - 106px - 331px);
   display: flex;
   align-items: top;
@@ -53,7 +53,7 @@
   text-align: left;
 }
 
-.input {
+.login-input {
   padding-left: 11px;
   margin-bottom: 24px;
   border: 0.7px solid #1d2528;

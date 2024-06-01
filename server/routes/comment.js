@@ -1,33 +1,37 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-const path = require('path');
-var pathname = path.join(__dirname, '../');
+const path = require("path");
+var pathname = path.join(__dirname, "../");
 const { db } = require(pathname + "database/mysql");
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
+const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 
-const sessionStore = new MySQLStore({
+const sessionStore = new MySQLStore(
+  {
     clearExpired: true,
     checkExpirationInterval: 900000,
     expiration: 86400000,
     createDatabaseTable: true,
     schema: {
-        tableName: 'session',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
-        }
+      tableName: "session",
+      columnNames: {
+        session_id: "session_id",
+        expires: "expires",
+        data: "data",
+      },
     },
-}, db);
+  },
+  db
+);
 
-
-router.use(session({
-    secret: 'secretcmm',
+router.use(
+  session({
+    secret: "secretcmm",
     resave: false,
     saveUninitialized: true,
-    store: sessionStore
-}));
+    store: sessionStore,
+  })
+);
 
 /**
  * @swagger
@@ -64,27 +68,30 @@ router.use(session({
  *               type: string
  *               example: "An error occurred while retrieving the comments."
  */
-router.get('/get-comments/:postId', express.urlencoded({ extended: true }), async (req, res) => {
+router.get(
+  "/get-comments/:postId",
+  express.urlencoded({ extended: true }),
+  async (req, res) => {
     if (!req.session || !req.session.userId) {
-        return res.status(401).send('Unauthorized');
+      return res.status(401).send("Unauthorized");
     }
 
     var postId = req.params.postId;
-    var commentsQuery = 'SELECT DATE_FORMAT(C.time_created, \'%Y-%m-%d %H:%i:%s\') AS timeCreated, C.content , CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author FROM comments C JOIN members M ON  C.commenter_id = M.member_id WHERE post_id = ?';
+    var commentsQuery =
+      "SELECT DATE_FORMAT(C.time_created, '%Y-%m-%d %H:%i:%s') AS timeCreated, C.content , CONCAT(M.`name.first`, ' ', M.`name.last`) AS author FROM comments C JOIN members M ON  C.commenter_id = M.member_id WHERE post_id = ?";
 
     try {
-        const [commentsResults] = await db.promise().query(commentsQuery, [postId]);
-
-        const response = {
-            comments: commentsResults,
-        };
-
-        res.json(response);
+      const [commentsResults] = await db
+        .promise()
+        .query(commentsQuery, [postId]);
+      const response = [...commentsResults];
+      res.status(200).send(response);
     } catch (err) {
-        console.error('Error fetching data', err);
-        res.status(500).send();
+      console.error("Error fetching data", err);
+      res.status(500).send();
     }
-});
+  }
+);
 
 /**
  * @swagger
@@ -111,28 +118,36 @@ router.get('/get-comments/:postId', express.urlencoded({ extended: true }), asyn
  *       401:
  *         description: Unauthorized access.
  */
-router.post('/upload-comment', express.urlencoded({ extended: true }), async (req, res) => {
+router.post(
+  "/upload-comment",
+  express.urlencoded({ extended: true }),
+  async (req, res) => {
     if (!req.session || !req.session.userId) {
-        return res.status(401).send('Unauthorized');
+      return res.status(401).send("Unauthorized");
     }
 
     const { postId, content } = req.body;
     const commenterId = req.session.userId;
-    const timeCreated = new Date(); 
+    const timeCreated = new Date();
 
     const insertQuery = `
         INSERT INTO comments (post_id, commenter_id, content, time_created)
         VALUES (?, ?, ?, ?)
     `;
 
-    db.query(insertQuery, [postId, commenterId, content, timeCreated], (err, results) => {
+    db.query(
+      insertQuery,
+      [postId, commenterId, content, timeCreated],
+      (err, results) => {
         if (err) {
-            console.error('Failed to insert comment', err);
-            return res.status(500).send('Failed to upload comment');
+          console.error("Failed to insert comment", err);
+          return res.status(500).send("Failed to upload comment");
         }
-        res.status(201).send('Comment uploaded successfully');
-    });
-});
+        res.status(201).send("Comment uploaded successfully");
+      }
+    );
+  }
+);
 
 /**
  * @swagger
@@ -159,15 +174,18 @@ router.post('/upload-comment', express.urlencoded({ extended: true }), async (re
  *       404:
  *         description: No comment found or you do not have permission to edit this comment.
  */
-router.put('/edit-comment', express.urlencoded({ extended: true }), async (req, res) => {
+router.put(
+  "/edit-comment",
+  express.urlencoded({ extended: true }),
+  async (req, res) => {
     if (!req.session || !req.session.userId) {
-        return res.status(401).send('Unauthorized');
+      return res.status(401).send("Unauthorized");
     }
 
     const { comment_id, content } = req.body;
 
     if (!comment_id || !content) {
-        return res.status(400).send('Comment ID and content are required');
+      return res.status(400).send("Comment ID and content are required");
     }
 
     const updateQuery = `
@@ -176,17 +194,26 @@ router.put('/edit-comment', express.urlencoded({ extended: true }), async (req, 
         WHERE comment_id = ? AND commenter_id = ?
     `;
 
-    db.query(updateQuery, [content, comment_id, req.session.userId], (err, result) => {
+    db.query(
+      updateQuery,
+      [content, comment_id, req.session.userId],
+      (err, result) => {
         if (err) {
-            console.error('Failed to update comment', err);
-            return res.status(500).send('Failed to update comment');
+          console.error("Failed to update comment", err);
+          return res.status(500).send("Failed to update comment");
         }
         if (result.affectedRows === 0) {
-            return res.status(404).send('No comment found or you do not have permission to edit this comment');
+          return res
+            .status(404)
+            .send(
+              "No comment found or you do not have permission to edit this comment"
+            );
         }
-        res.send('Comment updated successfully');
-    });
-});
+        res.send("Comment updated successfully");
+      }
+    );
+  }
+);
 
 /**
  * @swagger
@@ -207,15 +234,18 @@ router.put('/edit-comment', express.urlencoded({ extended: true }), async (req, 
  *       404:
  *         description: No comment found or you do not have permission to delete this comment.
  */
-router.get('/delete-comment', express.urlencoded({ extended: true }), async (req, res) => {
+router.get(
+  "/delete-comment",
+  express.urlencoded({ extended: true }),
+  async (req, res) => {
     if (!req.session || !req.session.userId) {
-        return res.status(401).send('Unauthorized');
+      return res.status(401).send("Unauthorized");
     }
 
-    const commentId  = req.query.commentId;
+    const commentId = req.query.commentId;
 
     if (!commentId) {
-        return res.status(400).send('Comment ID is required');
+      return res.status(400).send("Comment ID is required");
     }
 
     const deleteQuery = `
@@ -224,15 +254,20 @@ router.get('/delete-comment', express.urlencoded({ extended: true }), async (req
     `;
 
     db.query(deleteQuery, [commentId, req.session.userId], (err, result) => {
-        if (err) {
-            console.error('Failed to delete comment', err);
-            return res.status(500).send('Failed to delete comment');
-        }
-        if (result.affectedRows === 0) {
-            return res.status(404).send('No comment found or you do not have permission to delete this comment');
-        }
-        res.send('Comment deleted successfully');
+      if (err) {
+        console.error("Failed to delete comment", err);
+        return res.status(500).send("Failed to delete comment");
+      }
+      if (result.affectedRows === 0) {
+        return res
+          .status(404)
+          .send(
+            "No comment found or you do not have permission to delete this comment"
+          );
+      }
+      res.send("Comment deleted successfully");
     });
-});
+  }
+);
 
 module.exports = router;

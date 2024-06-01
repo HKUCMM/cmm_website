@@ -123,7 +123,9 @@ const Login = ({ setIsLoggedIn }) => {
       <form className="right" onSubmit={handleSubmit}>
         <h1 className="rightHeader">Welcome Back!</h1>
         <input
-          className={errors.email === "" || submitting ? "input" : "falseInput"}
+          className={
+            errors.email === "" || submitting ? "login-input" : "falseInput"
+          }
           type="text"
           name="email"
           placeholder="E-mail"
@@ -140,7 +142,7 @@ const Login = ({ setIsLoggedIn }) => {
         )}
         <input
           className={
-            errors.password === "" || submitting ? "input" : "falseInput"
+            errors.password === "" || submitting ? "login-input" : "falseInput"
           }
           type="password"
           name="password"
