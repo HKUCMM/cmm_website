@@ -1,5 +1,8 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
+app.use(cors());
+
 const { swaggerUi, specs } = require('./modules/swagger');
 var user_router = require('./routes/user');
 var content_router = require('./routes/content')

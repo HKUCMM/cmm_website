@@ -30,9 +30,9 @@ function createHash(userPassword) {
   return (hash.digest('hex'));
 }
 
-router.get('/', (req, res) => {
-  res.redirect('/login');
-})
+// router.get('/', (req, res) => {
+//   res.redirect('/login');
+// })
 
 /**
  * @swagger
@@ -71,6 +71,7 @@ router.get('/', (req, res) => {
 router.get('/session', (req, res) => {
   // Check if the user is logged in
   if (req.session.userId) {
+    console.log(req.session.userId);
     res.json({
       isLoggedIn: true,
       userId: req.session.userId,
@@ -177,24 +178,29 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
   // Proceed with the main login check if the first login check passes without redirect
   const query = `SELECT member_id, \`name.first\`, \`name.last\`, email, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
   try {
-    const resultsB = await new Promise((resolve, reject) => {
+    const results = await new Promise((resolve, reject) => {
       db.query(query, [loginEmail], function (err, results) {
         if (err) reject(err);
         else resolve(results);
       });
     });
 
-    if (resultsB.length === 0) {
+    if (results.length === 0) {
       res.status(401).send('No user found');
       return;
     }
 
-    const verified = checkPassword(resultsB[0].hashed_password, resultsB[0].salt, loginPassword);
+    const verified = checkPassword(results[0].hashed_password, results[0].salt, loginPassword);
 
     if (verified) {
       req.session.email = loginEmail;
-      req.session.userId = resultsB[0].member_id;
-      res.status(200).send('login successful');
+      req.session.userId = results[0].member_id;
+      console.log(req.session.userId);
+      res.status(200).json({
+        firstName: results[0]["name.first"],
+        lastName: results[0]["name.last"],
+        isAdmin: results[0].is_admin,
+      });
     } else {
       res.status(401).send('login info incorrect');
     }
@@ -202,8 +208,6 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
     res.status(500).send();
   }
 });
-
-
 
 /**
  * @swagger
