@@ -86,8 +86,9 @@ router.get("/session", (req, res) => {
 /**
  * @swagger
  * paths:
- *  /signup:
+ *  /changepw:
  *    post:
+ *      summary: Change password
  *      tags:
  *        - user
  *      description: Change Password
@@ -98,7 +99,7 @@ router.get("/session", (req, res) => {
  *        schema:
  *          properties:
  *            userId:
- *              type: int
+ *              type: integer
  *            newPassword:
  *              type: string
  *      responses:
@@ -150,6 +151,7 @@ router.post(
  * paths:
  *  /login:
  *    post:
+ *      summary: Login new user, set session variable
  *      tags:
  *        - user
  *      description: User log-in
@@ -228,6 +230,7 @@ router.post(
  * paths:
  *  /logout:
  *    get:
+ *      summary: Logout user, set session variable to null
  *      tags:
  *        - user
  *      description: User log-out
