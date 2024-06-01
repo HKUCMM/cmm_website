@@ -1,0 +1,53 @@
+.banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    url(../../public/wallpaper.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  height: calc(100vh - 106px);
+  display: flex;
+  text-align: left;
+  align-items: center;
+  justify-content: left;
+  color: white;
+}
+
+.darker-banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.73), rgba(0, 0, 0, 0.73)),
+    url(../../public/wallpaper.jpeg);
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border-top: solid 1px silver;
+}
+
+.banner-content {
+  margin: 0 10vw;
+}
+
+.banner-content h1 {
+  font-size: 7em;
+  margin: 0;
+  font-weight: 400;
+}
+
+.banner-content h2 {
+  font-size: 3rem;
+  font-weight: lighter;
+  letter-spacing: 0.1rem;
+}
+
+#mainpage-about h1 {
+  font-weight: 400;
+  font-size: 5rem;
+}
+
+#mainpage-about p {
+  font-weight: 300;
+  font-size: 2rem;
+}
+
+.about-image {
+  width: 400px;
+}
