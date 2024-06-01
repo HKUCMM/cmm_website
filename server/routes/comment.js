@@ -85,7 +85,6 @@ router.get(
         .promise()
         .query(commentsQuery, [postId]);
       const response = [...commentsResults];
-      console.log(response);
       res.status(200).send(response);
     } catch (err) {
       console.error("Error fetching data", err);

@@ -242,8 +242,7 @@ router.get("/view-all-post", async (req, res) => {
       res.status(500).send();
       return;
     }
-
-    res.json(results);
+    res.status(200).send(results);
   });
 });
 

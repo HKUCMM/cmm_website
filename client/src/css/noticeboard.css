@@ -1,8 +1,9 @@
 .noticeBox {
   padding-top: 42.5px;
-  padding-right: 235px;
-  width: 973px;
-  height: 134.5px;
+  padding-right: 20px;
+  width: 850px;
+  height: 120x;
+  border-bottom: 1px solid silver;
 }
 
 .noticeSubBox {
@@ -12,18 +13,22 @@
 
 .noticeTitle {
   color: #fff;
-
   font-family: "Titillium Web";
   font-size: 24px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 300;
   line-height: normal;
+  width: fit-content;
   margin-bottom: 2px;
+}
+
+.noticeTitle:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .dateAuthor {
   color: rgba(255, 255, 255, 0.6);
-
   font-family: "Titillium Web";
   font-size: 18px;
   font-style: normal;
@@ -49,7 +54,6 @@
 .likeCount,
 .messageCount {
   color: #fff;
-
   font-family: "Titillium Web";
   font-size: 18px;
   font-style: normal;
@@ -59,8 +63,6 @@
   vertical-align: top;
 }
 
-.noticeLine {
-  width: 862px;
-  height: 1.5px;
-  background: #fff;
+.likeCount {
+  margin-right: 20px;
 }

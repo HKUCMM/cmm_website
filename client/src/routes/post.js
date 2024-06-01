@@ -45,7 +45,6 @@ const Post = () => {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         setCommentData(data);
         setLoadingComments(false);
       })
