@@ -86,6 +86,7 @@ router.get('/session', (req, res) => {
  * paths:
  *  /changepw:
  *    post:
+ *      summary: Change password
  *      tags:
  *        - user
  *      description: Change Password
@@ -142,6 +143,7 @@ router.post('/changepw', express.urlencoded({ extended: true }), async (req, res
  * paths:
  *  /login:
  *    post:
+ *      summary: Login new user, set session variable
  *      tags:
  *        - user
  *      description: User log-in
@@ -208,6 +210,7 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
  * paths:
  *  /logout:
  *    get:
+ *      summary: Logout user, set session variable to null
  *      tags:
  *        - user
  *      description: User log-out

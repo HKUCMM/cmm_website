@@ -30,6 +30,57 @@ const sessionStore = new MySQLStore({
   }));
 
 
+/**
+ * @swagger
+ * paths:
+ *   /upload-post:
+ *     post:
+ *       summary: Upload a new post
+ *       tags:
+ *         - Posts
+ *       description: Upload a new post
+ *       parameters:
+ *         - in: body
+ *           name: body
+ *           required: true
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The title of the post
+ *                 example: "My New Post"
+ *               content:
+ *                 type: string
+ *                 description: The content of the post
+ *                 example: "Hello world"
+ *       responses:
+ *         200:
+ *           description: Post uploaded successfully
+ *         500:
+ *           description: Internal server error
+ */
+router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    var title = req.body.title;
+    var content = req.body.content;
+    var authorID = req.session.userId;
+
+    var post = 'INSERT INTO posts (title, content, num_of_likes, time_created, author_id) VALUES (?, ?, ?, NOW(), ?)';
+    db.query(post, [title, content, 0, authorID], function(err, result) {
+        if (err) {
+            console.error('Error uploading post', err);
+            res.status(500).send();
+            return;
+        }
+        res.status(200).send();
+    });
+});
+
+
   /**
    * @swagger
    * /view-post/{postId}/like-post:
@@ -65,26 +116,6 @@ const sessionStore = new MySQLStore({
    *           type: string
    *           example: Internal Server Error
    */
-router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) => {
-    if (!req.session || !req.session.userId) {
-        return res.status(401).send('Unauthorized');
-    }
-
-    var title = req.body.title;
-    var content = req.body.content;
-    var authorID = req.session.userId;
-
-    var post = 'INSERT INTO posts (title, content, num_of_likes, time_created, author_id) VALUES (?, ?, ?, NOW(), ?)';
-    db.query(post, [title, content, 0, authorID], function(err, result) {
-        if (err) {
-            console.error('Error uploading post', err);
-            res.status(500).send();
-            return;
-        }
-        res.status(200).send();
-    });
-});
-
 router.get('/view-post/:postId/like-post', express.urlencoded({ extended: true }), async (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).send('Unauthorized');
@@ -125,6 +156,7 @@ router.get('/view-post/:postId/like-post', express.urlencoded({ extended: true }
  * paths:
  *   /view-all-post:
  *     get:
+ *       summary: Get all posts
  *       tags:
  *         - Posts
  *       description: Retrieve all posts along with their authors and comment counts
