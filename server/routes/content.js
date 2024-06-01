@@ -12,22 +12,22 @@ const sessionStore = new MySQLStore({
     expiration: 86400000,
     createDatabaseTable: true,
     schema: {
-      tableName: 'session',
-      columnNames: {
-        session_id: 'session_id',
-        expires: 'expires',
-        data: 'data'
-      }
+        tableName: 'session',
+        columnNames: {
+            session_id: 'session_id',
+            expires: 'expires',
+            data: 'data'
+        }
     },
-  }, db);
+}, db);
 
 
-  router.use(session({
+router.use(session({
     secret: 'secretcmm',
     resave: false,
     saveUninitialized: true,
     store: sessionStore
-  }));
+}));
 
 
 /**
@@ -68,7 +68,7 @@ router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) =
     var authorID = req.session.userId;
 
     var post = 'INSERT INTO posts (title, content, num_of_likes, time_created, author_id) VALUES (?, ?, ?, NOW(), ?)';
-    db.query(post, [title, content, 0, authorID], function(err, result) {
+    db.query(post, [title, content, 0, authorID], function (err, result) {
         if (err) {
             console.error('Error uploading post', err);
             res.status(500).send();
@@ -147,7 +147,7 @@ router.get('/view-all-post', async (req, res) => {
             res.status(500).send();
             return;
         }
-        
+
         res.json(results);
     });
 });
@@ -187,7 +187,7 @@ router.get('/view-post/:post_id', async (req, res) => {
     var postId = req.params.post_id;
 
     var query = 'SELECT P.title, P.num_of_likes, P.time_created, CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author, P.content FROM posts P JOIN members M ON P.author_id = M.member_id WHERE post_id = ?';
-    db.query(query, [postId], function(err, results) {
+    db.query(query, [postId], function (err, results) {
         if (err) {
             console.error('Error fetching post', err);
             res.status(500).send();
@@ -199,8 +199,6 @@ router.get('/view-post/:post_id', async (req, res) => {
             return;
         }
 
-        var markdownContent = results[0].content;
-        console.log(markdownContent);
         res.json(results);
     });
 });
@@ -252,7 +250,7 @@ router.put('/edit-post/:post_id', express.urlencoded({ extended: true }), (req, 
     var postId = req.params.post_id;
     var title = req.body.title;
     var editedContent = req.body.content;
-    
+
     const authQuery = 'SELECT author_id FROM posts WHERE post_id = ?';
     db.query(authQuery, [postId], (err, results) => {
         if (err) {

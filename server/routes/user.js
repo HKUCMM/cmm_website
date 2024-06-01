@@ -71,7 +71,6 @@ function createHash(userPassword) {
 router.get('/session', (req, res) => {
   // Check if the user is logged in
   if (req.session.userId) {
-    console.log(req.session.userId);
     res.json({
       isLoggedIn: true,
       userId: req.session.userId,
@@ -195,7 +194,6 @@ router.post('/login', express.urlencoded({ extended: true }), async (req, res) =
     if (verified) {
       req.session.email = loginEmail;
       req.session.userId = results[0].member_id;
-      console.log(req.session.userId);
       res.status(200).json({
         firstName: results[0]["name.first"],
         lastName: results[0]["name.last"],

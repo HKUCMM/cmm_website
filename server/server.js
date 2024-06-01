@@ -1,13 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
 
 const { swaggerUi, specs } = require('./modules/swagger');
 var user_router = require('./routes/user');
 var content_router = require('./routes/content')
 var comment_router = require('./routes/comment')
-//var display_router = require('./routes/display');
 var session = require('express-session');
 require('dotenv').config();
 

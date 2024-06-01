@@ -13,6 +13,7 @@ const Login = () => {
     emailInvalid: "",
     password: ""
   });
+  const [submitting, setSubmitting] = useState(false);
   const [cookies, setCookies] = useCookies(["name", "isAdmin"]);
 
   const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -21,7 +22,6 @@ const Login = () => {
   const validateValues = () => {
     let errorPresent = false;
     if (email.length === 0) {
-      console.log("HI");
       setErrors((prevState) => {
         return { ...prevState, email: "Required field", emailEmpty: "Required field", emailInvalid: "" };
       })
@@ -38,6 +38,10 @@ const Login = () => {
         return { ...prevState, password: "Required field" };
       })
       errorPresent = true;
+    } else {
+      setErrors((prevState) => {
+        return { ...prevState, password: "" };
+      })
     }
 
     return !errorPresent;
@@ -45,9 +49,10 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setSubmitting(true);
     const validValues = validateValues();
     if (!validValues) {
-      return console.log(errors);
+      setSubmitting(false);
     } else {
       return handleAPI();
     }
@@ -55,6 +60,7 @@ const Login = () => {
 
   const handleAPI = () => {
     fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      credentials: "include",
       method: "POST",
       body: JSON.stringify({
         loginEmail: email,
@@ -77,7 +83,6 @@ const Login = () => {
       setCookies("isAdmin", isAdmin, { path: "/", expires });
       navigate("/");
     }).catch((err) => {
-      console.log(err)
       return err;
     });
   }
@@ -91,30 +96,30 @@ const Login = () => {
       <form className="right" onSubmit={handleSubmit}>
         <h1 className="rightHeader">Welcome Back!</h1>
         <input
-          className={errors.email ? "falseInput" : "input"}
+          className={errors.email === "" || submitting ? "input" : "falseInput"}
           type="text"
           name="email"
           placeholder="E-mail"
           value={email}
           onChange={(e) => { setEmail(e.target.value) }}
         ></input>
-        {errors.emailEmpty ? (
+        {errors.emailEmpty === "" || submitting ? null : (
           <p className="errorEmail">Required field</p>
-        ) : null}
-        {errors.emailInvalid ? (
+        )}
+        {errors.emailInvalid === "" || submitting ? null : (
           <p className="errorEmail">Invalid email address!</p>
-        ) : null}
+        )}
         <input
-          className={errors.password ? "falseInput" : "input"}
+          className={errors.password === "" || submitting ? "input" : "falseInput"}
           type="password"
           name="password"
           placeholder="Password"
           value={password}
           onChange={(e) => { setPassword(e.target.value) }}
         ></input>
-        {errors.password ? (
+        {errors.password === "" || submitting ? null : (
           <p className="errorPassword">Required field</p>
-        ) : null}
+        )}
         {/* <p className="forget">Forgot Password?</p> 링크로 바꿔야 함 */}
         <button type="submit" className="loginButton">Login</button>
         <p className="signup">Don't have an account? Sign Up</p>{" "}
