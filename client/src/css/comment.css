@@ -1,7 +1,3 @@
-.box {
-  padding-top: 61px;
-}
-
 .profile {
   width: 75px;
   height: 75px;
@@ -29,11 +25,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  margin-left: 10px;
 }
 
 .user {
   display: flex;
+  margin-top: 15px;
   margin-bottom: 21px;
 }
 
@@ -45,16 +41,11 @@
   color: #ffffff;
 }
 
-.line {
-  margin-top: 10px;
-  width: 846px;
-  border: 1px 0px 0px 0px;
-  border: 1px solid #ffffff80;
-}
-
 .component {
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid silver;
+  padding-bottom: 20px;
 }
 
 .like {

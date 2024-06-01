@@ -1,6 +1,7 @@
 .background {
+  border-top: 1px solid silver;
   padding-top: 95px;
-  background: 1d2528;
+  background: #1d2528;
   display: flex;
   justify-content: center;
 }
@@ -14,6 +15,7 @@
 
 .components {
   display: flex;
+  width: fit-content;
 }
 
 .icon {
@@ -33,6 +35,10 @@
   color: #ffffff;
 }
 
+.title-box {
+  border-bottom: solid 1px silver;
+}
+
 .title {
   font-family: Titillium Web;
   font-size: 60px;
@@ -48,7 +54,6 @@
   font-family: Titillium Web;
   font-size: 30px;
   font-weight: 400;
-  line-height: 45.63px;
   text-align: center;
   color: #ffffff;
 }
@@ -56,7 +61,7 @@
 .author {
   font-weight: 600;
   text-align: center;
-  margin-bottom: 80px;
+  margin-bottom: 15px;
 }
 
 .img {
@@ -64,9 +69,9 @@
   height: 477px;
 }
 
-.body {
-  margin-top: 54px;
-  margin-bottom: 112px;
+.markdown {
+  margin-top: 25px;
+  padding-bottom: 50px;
   width: 846px;
   font-family: Titillium Web;
   font-size: 25px;
@@ -74,23 +79,81 @@
   line-height: 38.03px;
   text-align: left;
   color: #ffffff;
+  border-bottom: 1px solid silver;
+  font-weight: 200;
 }
 
-.line {
-  width: 846px;
-  border: 1px 0px 0px 0px;
-  border: 1px solid #ffffff80;
+.markdown h1 {
+  font-weight: 500;
+}
+
+.markdown p {
+  font-size: smaller;
+}
+
+.markdown h2 {
+  font-weight: 300;
+}
+
+.markdown ul {
+  font-size: smaller;
+}
+
+.markdown ol {
+  font-size: smaller;
+}
+
+.markdown table {
+  padding: 20px;
+  border: 1px solid silver;
+  margin-bottom: 20px;
+}
+
+.markdown thead {
+  border-bottom: 1px solid silver;
+}
+
+.markdown th {
+  text-align: center;
+  border-right: 1px solid silver;
+  font-weight: 300;
+  padding: 10px;
+}
+
+.markdown td {
+  border-right: 1px solid silver;
+  border-bottom: 1px solid silver;
+  font-weight: 200;
+  font-size: smaller;
+  padding: 10px;
+}
+
+.markdown pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  color: #e6edf3;
+  background-color: #161b22;
+  border-radius: 6px;
+}
+
+.markdown code {
+  font-size: 1rem;
+  padding: 0;
+  margin: 0;
 }
 
 .input {
+  height: 125px;
   display: flex;
   flex-direction: column;
 }
+
 .inputfields {
   background: rgba(0, 0, 0, 0);
   padding: 15px;
   width: 846px;
-  height: 137px;
   border-radius: 8px;
   border: 1.5px solid #ffffff;
   font-family: Titillium Web;
@@ -98,6 +161,7 @@
   font-weight: 400;
   line-height: 30.42px;
   color: #ffffff;
+  align-content: center;
 }
 
 .submit {
@@ -116,7 +180,7 @@
 }
 
 .list {
-  margin-top: 72px;
+  margin-top: 30px;
   margin-bottom: 79px;
   font-family: Titillium Web;
   font-size: 20px;

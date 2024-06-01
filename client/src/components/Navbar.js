@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 function NavBar({ isLoggedIn, setIsLoggedIn }) {
   const navBarItems = [
     ["PROJECTS", "projects"],
-    ["NOTICE", "notice"],
+    ["NOTICE", "posts"],
     ["CONTACT US", "contacts"],
   ]; // navBarItems[0]: name, navBarItems[1]: link
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ function NavBar({ isLoggedIn, setIsLoggedIn }) {
             })}
             {isLoggedIn ? (
               <NavDropdownBS
-                title={`Hi ${localStorage.getItem("name")}`}
+                title={`HI ${localStorage.getItem("name").toUpperCase()}`}
                 style={{ margin: "0px 10px", fontSize: "20px" }}
               >
                 <NavDropdownBS.Item href="">PROFILE</NavDropdownBS.Item>

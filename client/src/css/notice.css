@@ -3,6 +3,7 @@
 }
 
 .noticeBackground {
+  border-top: 1px solid silver;
   height: 55vw;
   padding-top: 50px;
   padding-left: 71px;

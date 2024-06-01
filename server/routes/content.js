@@ -302,13 +302,13 @@ router.get("/view-post/:postId", async (req, res) => {
   try {
     const [postResults] = await db.promise().query(postQuery, [postId]);
     const [likesResults] = await db.promise().query(likesQuery, [postId]);
-
+    const numOfLikes = likesResults.length > 0 ? likesResults[0].numOfLikes : 0;
     const response = {
-      post: postResults,
-      likes: likesResults.length > 0 ? likesResults[0].numOfLikes : 0,
+      ...postResults[0],
+      numOfLikes: numOfLikes,
     };
 
-    res.json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Error fetching data", err);
     res.status(500).send();
