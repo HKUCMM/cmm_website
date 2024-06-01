@@ -30,35 +30,41 @@ const sessionStore = new MySQLStore({
   }));
 
 
-/**
- * @swagger
- * paths:
- *   /upload-post:
- *     post:
- *       tags:
- *         - Posts
- *       description: Upload a new post
- *       parameters:
- *         - in: body
- *           name: body
- *           required: true
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: The title of the post
- *                 example: "My New Post"
- *               content:
- *                 type: string
- *                 description: The content of the post
- *                 example: "Hello world"
- *       responses:
- *         200:
- *           description: Post uploaded successfully
- *         500:
- *           description: Internal server error
- */
+  /**
+   * @swagger
+   * /view-post/{postId}/like-post:
+   *   get:
+   *     summary: Like or dislike a post
+   *     description: Toggles the like status of a post for the authenticated user. If the post is already liked, it will be disliked, and vice versa. The number of likes on the post will be updated accordingly.
+   *     tags:
+   *       - Posts
+   *     parameters:
+   *       - in: path
+   *         name: postId
+   *         required: true
+   *         schema:
+   *           type: string
+   *         description: The ID of the post to like or dislike
+   *     responses:
+   *       200:
+   *         description: Post like status updated successfully
+   *         schema:
+   *           type: object
+   *           properties:
+   *             message:
+   *               type: string
+   *               example: Post liked successfully
+   *       401:
+   *         description: Unauthorized - User is not logged in
+   *         schema:
+   *           type: string
+   *           example: Unauthorized
+   *       500:
+   *         description: Internal Server Error
+   *         schema:
+   *           type: string
+   *           example: Internal Server Error
+   */
 router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.status(401).send('Unauthorized');
@@ -78,6 +84,41 @@ router.post('/upload-post', express.urlencoded({ extended: true }), (req, res) =
         res.status(200).send();
     });
 });
+
+router.get('/view-post/:postId/like-post', express.urlencoded({ extended: true }), async (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    var memberId = req.session.userId;
+    var postId = req.params.postId;
+
+    const checkLikeQuery = 'SELECT * FROM member_likes_post WHERE member_id = ? AND post_id = ?';
+    const likePostQuery = 'INSERT INTO member_likes_post (member_id, post_id) VALUES (?, ?)';
+    const dislikePostQuery = 'DELETE FROM member_likes_post WHERE member_id = ? AND post_id = ?';
+    const incrementLikesQuery = 'UPDATE posts SET num_of_likes = num_of_likes + 1 WHERE post_id = ?';
+    const decrementLikesQuery = 'UPDATE posts SET num_of_likes = GREATEST(num_of_likes - 1, 0) WHERE post_id = ?';
+
+    try {
+        const [checkLikeResults] = await db.promise().query(checkLikeQuery, [memberId, postId]);
+
+        if (checkLikeResults.length > 0) {
+            // Member has already liked the post, so dislike it
+            await db.promise().query(dislikePostQuery, [memberId, postId]);
+            await db.promise().query(decrementLikesQuery, [postId]);
+            return res.status(200).json({ message: 'Post disliked successfully' });
+        } else {
+            // Member has not liked the post, so like it
+            await db.promise().query(likePostQuery, [memberId, postId]);
+            await db.promise().query(incrementLikesQuery, [postId]);
+            return res.status(200).json({ message: 'Post liked successfully' });
+        }
+    } catch (err) {
+        console.error('Error updating like status', err);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
 
 /**
  * @swagger
@@ -193,21 +234,32 @@ router.get('/view-post/:postId', async (req, res) => {
 
     var postId = req.params.postId;
 
-    var query = 'SELECT P.title, P.num_of_likes AS numOfLikes, P.time_created AS timeCreated, CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author, P.content FROM posts P JOIN members M ON P.author_id = M.member_id WHERE post_id = ?';
-    db.query(query, [postId], function(err, results) {
-        if (err) {
-            console.error('Error fetching post', err);
-            res.status(500).send();
-            return;
-        }
+    var postQuery = 'SELECT P.title, P.num_of_likes AS numOfLikes, P.time_created AS timeCreated, CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author, P.content FROM posts P JOIN members M ON P.author_id = M.member_id WHERE post_id = ?';
+    var likesQuery = `
+    SELECT 
+        COUNT(member_id) AS numOfLikes 
+    FROM 
+        member_likes_post
+    WHERE 
+        post_id = ?
+    GROUP BY 
+        post_id
+    `;
 
-        if (results.length === 0) {
-            res.status(404).send('Post not found');
-            return;
-        }
+    try {
+        const [postResults] = await db.promise().query(postQuery, [postId]);
+        const [likesResults] = await db.promise().query(likesQuery, [postId]);
 
-        res.json(results);
-    });
+        const response = {
+            post: postResults,
+            likes: likesResults.length > 0 ? likesResults[0].numOfLikes : 0
+        };
+
+        res.json(response);
+    } catch (err) {
+        console.error('Error fetching data', err);
+        res.status(500).send();
+    }
 });
 
 /**

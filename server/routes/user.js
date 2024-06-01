@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
 /**
  * @swagger
  * /session:
- *   get:
+ *   get: 
  *     summary: Retrieves session data
  *     description: Returns JSON containing session information, including user ID and email if the user is logged in.
  *     responses:

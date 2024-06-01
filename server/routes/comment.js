@@ -71,24 +71,12 @@ router.get('/get-comments/:postId', express.urlencoded({ extended: true }), asyn
 
     var postId = req.params.postId;
     var commentsQuery = 'SELECT DATE_FORMAT(C.time_created, \'%Y-%m-%d %H:%i:%s\') AS timeCreated, C.content , CONCAT(M.\`name.first\`, \' \', M.\`name.last\`) AS author FROM comments C JOIN members M ON  C.commenter_id = M.member_id WHERE post_id = ?';
-    var likesQuery = `
-        SELECT 
-            COUNT(member_id) AS numOfLikes 
-        FROM 
-            member_likes_post
-        WHERE 
-            post_id = ?
-        GROUP BY 
-            post_id
-    `;
 
     try {
         const [commentsResults] = await db.promise().query(commentsQuery, [postId]);
-        const [likesResults] = await db.promise().query(likesQuery, [postId]);
 
         const response = {
             comments: commentsResults,
-            likes: likesResults.length > 0 ? likesResults[0].numOfLikes : 0
         };
 
         res.json(response);
