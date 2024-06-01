@@ -5,8 +5,14 @@ import { useState } from "react";
 const Post = () => {
   const [content, setContent] = useState("");
   const handleChange = (e) => {
-    setContent({ ...content });
+    setContent(e.target.value);
   };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(content);
+    setContent("");
+  };
+
   return (
     <div className="background">
       <div className="SubBackground">
@@ -36,11 +42,12 @@ const Post = () => {
           <img className="icon" src="/likes.png" alt="likes" />
           <p className="text">공감</p>
         </div>
-        <form className="input">
+        <form className="input" onSubmit={handleSubmit}>
           <textarea
             className="inputfields"
             type="text"
             placeholder="댓글을 작성하세요."
+            value={content}
             onChange={handleChange}
           />
           <button className="submit">댓글 작성</button>
