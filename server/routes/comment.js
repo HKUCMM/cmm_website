@@ -4,6 +4,7 @@ const path = require("path");
 var pathname = path.join(__dirname, "../");
 const { db } = require(pathname + "database/mysql");
 
+
 /**
  * @swagger
  * /get-comments/{post_id}:

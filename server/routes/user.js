@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const crypto = require("crypto");
+const { create } = require("domain");
 const pathname = path.join(__dirname, "../");
 const { db } = require(pathname + "database/mysql");
 
@@ -20,6 +21,7 @@ function createHash(userPassword) {
 
   return hash.digest("hex");
 }
+
 
 /**
  * @swagger
@@ -107,17 +109,18 @@ router.post(
   express.urlencoded({ extended: true }),
   async (req, res) => {
     const newPassword = req.body.newPassword;
-    const queryA = `SELECT salt FROM members WHERE member_id = ? `;
+    const oldPassword = req.body.oldPassword;
 
     db.query(queryA, [req.session.userId], function (err, results) {
       if (err) {
         res.status(404).send();
       } else {
         const userSalt = results[0].salt;
-        const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ?`;
+        const hashedOldPassword = createHash(oldPassword+userSalt);
+        const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ? AND hashed_password = ?`;
         db.query(
           queryB,
-          [createHash(newPassword + userSalt), req.body.userId],
+          [createHash(newPassword + userSalt), req.body.userId, hashedOldPassword],
           function (err, results) {
             if (err) {
               res.status(401).send();
