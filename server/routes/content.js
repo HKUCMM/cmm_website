@@ -3,35 +3,6 @@ var router = express.Router();
 const path = require("path");
 var pathname = path.join(__dirname, "../");
 const { db } = require(pathname + "database/mysql");
-const session = require("express-session");
-const MySQLStore = require("express-mysql-session")(session);
-
-// const sessionStore = new MySQLStore(
-//   {
-//     clearExpired: true,
-//     checkExpirationInterval: 900000,
-//     expiration: 86400000,
-//     createDatabaseTable: true,
-//     schema: {
-//       tableName: "session",
-//       columnNames: {
-//         session_id: "session_id",
-//         expires: "expires",
-//         data: "data",
-//       },
-//     },
-//   },
-//   db
-// );
-
-// router.use(
-//   session({
-//     secret: "secretcmm",
-//     resave: false,
-//     saveUninitialized: true,
-//     store: sessionStore,
-//   })
-// );
 
 /**
  * @swagger

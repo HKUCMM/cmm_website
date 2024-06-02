@@ -4,17 +4,6 @@ const path = require("path");
 const crypto = require("crypto");
 const pathname = path.join(__dirname, "../");
 const { db } = require(pathname + "database/mysql");
-const session = require("express-session");
-
-// // Middleware to enable session handling
-// router.use(
-//   session({
-//     secret: "yourSecretKey",
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { secure: false }, // Set to true if using HTTPS
-//   })
-// );
 
 const pbkdf2_iterations = 10371;
 
