@@ -1,0 +1,35 @@
+.div {
+  box-sizing: border-box;
+}
+
+.noticeBackground {
+  border-top: 1px solid silver;
+  height: 100vh;
+  background: #1d2528;
+}
+
+.notice-board {
+  margin: 8vh 15vw;
+}
+
+.notice-board-title {
+  color: #fff;
+  font-family: "Titillium Web";
+  font-size: 60px;
+  font-style: normal;
+  font-weight: 200;
+  line-height: normal;
+}
+
+.add {
+  width: 70px;
+  height: 70px;
+  content: "+";
+  position: sticky;
+  float: right;
+  bottom: 0;
+}
+
+.add:hover {
+  cursor: pointer;
+}

@@ -1,0 +1,192 @@
+.background {
+  border-top: 1px solid silver;
+  padding-top: 95px;
+  background: #1d2528;
+  display: flex;
+  justify-content: center;
+}
+
+.subBackground {
+  width: 846px;
+  gap: 0px;
+  opacity: 0px;
+  background: #d9d9d903;
+}
+
+.components {
+  display: flex;
+  width: fit-content;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  top: 183px;
+  left: 214px;
+}
+
+.text {
+  padding-left: 5px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  text-align: left;
+  color: #ffffff;
+}
+
+.title-box {
+  border-bottom: solid 1px silver;
+}
+
+.title {
+  font-family: Titillium Web;
+  font-size: 60px;
+  font-weight: 600;
+  line-height: 91.26px;
+  text-align: center;
+  color: #ffffff;
+  display: flex;
+}
+
+.date {
+  display: flex;
+  font-family: Titillium Web;
+  font-size: 30px;
+  font-weight: 400;
+  text-align: center;
+  color: #ffffff;
+}
+
+.author {
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.img {
+  width: 846px;
+  height: 477px;
+}
+
+.markdown {
+  margin-top: 25px;
+  padding-bottom: 50px;
+  width: 846px;
+  font-family: Titillium Web;
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 38.03px;
+  text-align: left;
+  color: #ffffff;
+  border-bottom: 1px solid silver;
+  font-weight: 200;
+}
+
+.markdown h1 {
+  font-weight: 500;
+}
+
+.markdown p {
+  font-size: smaller;
+}
+
+.markdown h2 {
+  font-weight: 300;
+}
+
+.markdown ul {
+  font-size: smaller;
+}
+
+.markdown ol {
+  font-size: smaller;
+}
+
+.markdown table {
+  padding: 20px;
+  border: 1px solid silver;
+  margin-bottom: 20px;
+}
+
+.markdown thead {
+  border-bottom: 1px solid silver;
+}
+
+.markdown th {
+  text-align: center;
+  border-right: 1px solid silver;
+  font-weight: 300;
+  padding: 10px;
+}
+
+.markdown td {
+  border-right: 1px solid silver;
+  border-bottom: 1px solid silver;
+  font-weight: 200;
+  font-size: smaller;
+  padding: 10px;
+}
+
+.markdown pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  color: #e6edf3;
+  background-color: #161b22;
+  border-radius: 6px;
+}
+
+.markdown code {
+  font-size: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.input {
+  padding: 0;
+  height: 125px;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputfields {
+  background: rgba(0, 0, 0, 0);
+  padding: 15px;
+  width: 846px;
+  border-radius: 8px;
+  border: 1.5px solid #ffffff;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  color: #ffffff;
+  align-content: center;
+}
+
+.submit {
+  margin-left: 705px;
+  margin-top: 18px;
+  width: 141px;
+  height: 40px;
+  border-radius: 8px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 30.42px;
+  text-align: center;
+  background: #d9d9d9;
+  margin-bottom: 5px;
+}
+
+.list {
+  margin-top: 30px;
+  margin-bottom: 79px;
+  font-family: Titillium Web;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30.42px;
+  text-align: right;
+  color: #ffffff;
+}

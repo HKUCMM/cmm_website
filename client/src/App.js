@@ -1,31 +1,35 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./routes/Home.js";
+import Login from "./routes/Login.js";
+import Mynav from "./components/Navbar.js";
+import Footer from "./components/Footer.js";
+import Notice from "./routes/notice.js";
+import Post from "./routes/post.js";
+import PageNotFound from "./routes/PageNotFound.js";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  
-  const [backendData, setBackendData] = useState([{}])
-
-  useEffect(() => {
-    fetch("/user").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
-  }, [])
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("name"));
 
   return (
-    <div>
-      {(typeof backendData.users === "undefined") ? (
-        <p>Loading ...</p>
-      ) : (
-        backendData.users.map((user, i) => (
-          <p key={i}>{user}</p>
-        ))
-      )}
-    </div>
-  )
-
+    <BrowserRouter>
+      <Mynav isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+      <div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/login"
+            element={<Login setIsLoggedIn={setIsLoggedIn} />}
+          />
+          <Route path="/posts" element={<Notice />} />
+          <Route path="/posts/:postId" element={<Post />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </div>
+      <Footer />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
