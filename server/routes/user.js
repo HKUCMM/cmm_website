@@ -22,7 +22,6 @@ function createHash(userPassword) {
   return hash.digest("hex");
 }
 
-
 /**
  * @swagger
  * /session:
@@ -110,25 +109,33 @@ router.post(
   async (req, res) => {
     const newPassword = req.body.newPassword;
     const oldPassword = req.body.oldPassword;
-
+    const queryA = `SELECT hashed_password, salt FROM members WHERE member_id = ?`;
     db.query(queryA, [req.session.userId], function (err, results) {
       if (err) {
         res.status(404).send();
       } else {
         const userSalt = results[0].salt;
-        const hashedOldPassword = createHash(oldPassword+userSalt);
-        const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ? AND hashed_password = ?`;
-        db.query(
-          queryB,
-          [createHash(newPassword + userSalt), req.body.userId, hashedOldPassword],
-          function (err, results) {
-            if (err) {
-              res.status(401).send();
-            } else {
-              res.status(200).send("updated successfully");
+        const hashedOldPassword = createHash(oldPassword + userSalt);
+        if (results[0].hashed_password !== hashedOldPassword) {
+          res.status(401).send();
+        } else {
+          const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ? AND hashed_password = ?`;
+          db.query(
+            queryB,
+            [
+              createHash(newPassword + userSalt),
+              req.session.userId,
+              hashedOldPassword,
+            ],
+            function (err, results) {
+              if (err) {
+                res.status(401).send();
+              } else {
+                res.status(200).send("updated successfully");
+              }
             }
-          }
-        );
+          );
+        }
       }
     });
   }
