@@ -8,6 +8,7 @@ import Notice from "./routes/notice.js";
 import Post from "./routes/post.js";
 import PageNotFound from "./routes/PageNotFound.js";
 import ChangePassword from "./routes/ChangePassword.js";
+import ContactUs from "./routes/ContactUs.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           />
           <Route path="/posts" element={<Notice />} />
           <Route path="/posts/:postId" element={<Post />} />
+          <Route path="/contact-us" element={<ContactUs />} />
           <Route
             path="/change-password"
             element={<ChangePassword setIsLoggedIn={setIsLoggedIn} />}

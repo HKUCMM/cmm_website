@@ -11,7 +11,7 @@ function NavBar({ isLoggedIn, setIsLoggedIn }) {
   const navBarItems = [
     ["PROJECTS", "projects"],
     ["NOTICE", "posts"],
-    ["CONTACT US", "contacts"],
+    ["CONTACT US", "contact-us"],
   ]; // navBarItems[0]: name, navBarItems[1]: link
   const navigate = useNavigate();
 
