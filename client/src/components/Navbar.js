@@ -39,11 +39,7 @@ function NavBar({ isLoggedIn, setIsLoggedIn }) {
       <NavbarBS style={{ background: "#1D2528" }} data-bs-theme="dark">
         <ContainerBS fluid style={{ marginLeft: "60px", marginRight: "60px" }}>
           <NavbarBS.Brand onClick={() => handleNavClick("")} type="button">
-            <img
-              src={process.env.PUBLIC_URL + "/CMM_LOGO.png"}
-              alt="CMM Logo"
-              width="80px"
-            />
+            <img src={"CMM_LOGO.png"} alt="CMM Logo" width="80px" />
           </NavbarBS.Brand>
           <NavBS variant="underline" className="ms-auto">
             {navBarItems.map((navBarItem) => {

@@ -21,17 +21,9 @@ const Noticeboard = ({ noticeBoardData }) => {
           {convertDate(noticeBoardData.date)} by {noticeBoardData.author}
         </p>
         <div className="likeMessage">
-          <img
-            className="likeImg"
-            src={process.env.PUBLIC_URL + "/like.png"}
-            alt="like"
-          />
+          <img className="likeImg" src={"/like.png"} alt="like" />
           <span className="likeCount">{noticeBoardData.numOfLikes}</span>
-          <img
-            className="messageImg"
-            src={process.env.PUBLIC_URL + "/message.png"}
-            alt="message"
-          />
+          <img className="messageImg" src={"/message.png"} alt="message" />
           <span className="messageCount">{noticeBoardData.numOfcomments}</span>
         </div>
         {/* <div style={{ clear: "float" }}></div> */}

@@ -8,9 +8,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // NOTE:  Commenting out strict mode will not alert the user of any potential problems in the code.
   //        Must remove or comment out during deployment.
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  // <React.StrictMode>
+  <App />
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
