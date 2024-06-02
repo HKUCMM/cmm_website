@@ -2,9 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
+
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${process.env.CORS_ORIGIN}/${process.env.PORT}`,
     credentials: true,
   })
 );
@@ -13,7 +14,6 @@ const { swaggerUi, specs } = require("./modules/swagger");
 var userRouter = require("./routes/user");
 var contentRouter = require("./routes/content");
 var commentRouter = require("./routes/comment");
-//var display_router = require('./routes/display');
 var session = require("express-session");
 
 app.set("view engine", "ejs");
@@ -22,7 +22,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(
   session({
-    secret: "mysecretkey",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
   })

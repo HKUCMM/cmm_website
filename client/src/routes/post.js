@@ -27,6 +27,7 @@ const Post = () => {
   const [loadingComments, setLoadingComments] = useState(true);
   const [postData, setPostData] = useState({});
   const [commentData, setCommentData] = useState();
+  const [newCommentData, setNewCommentData] = useState('');
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/view-post/${postId}`, {
@@ -68,8 +69,56 @@ const Post = () => {
     navigate("/posts");
   };
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    console.log("comment",commentData.postId);
+
+    const requestBody = {
+      postId: postId,
+      content: newCommentData,
+    };
+    
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/upload-comment`, {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        // Handle successful response
+        console.log('Comment submitted successfully');
+        setNewCommentData('');
+        fetchComments();
+      } else {
+        // Handle error response
+        console.error('Error submitting comment');
+      }
+    } catch (error) {
+      console.error('Network error submitting comment:', error);
+    }
+  };
+
+  const fetchComments = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/get-comments/${postId}`, {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error('Failed to load comments');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setCommentData(data);
+        setLoadingComments(false);
+      })
+      .catch((err) => {
+        console.error('Error loading comments:', err);
+      });
   };
 
   const convertDate = (date) => {
@@ -105,6 +154,8 @@ const Post = () => {
                 className="inputfields"
                 type="text"
                 placeholder="Share your thoughts"
+                value={newCommentData}
+                onChange={(e)=>setNewCommentData(e.target.value)}
               />
               <button className="submit">Submit</button>
             </form>
