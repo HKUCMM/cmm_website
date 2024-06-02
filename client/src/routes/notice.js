@@ -51,11 +51,7 @@ function Notice() {
           : postsData.map((data) => {
               return <Noticeboard noticeBoardData={data} />;
             })}
-        <img
-          className="add"
-          src={process.env.PUBLIC_URL + "/add.png"}
-          alt="add"
-        />
+        <img className="add" src={"/add.png"} alt="add" />
       </div>
     </div>
   );

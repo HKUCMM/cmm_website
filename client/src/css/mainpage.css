@@ -38,6 +38,16 @@
   letter-spacing: 0.1rem;
 }
 
+.about-content h1 {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.about-content p {
+  text-align: left;
+  width: 42vw;
+}
+
 #mainpage-about h1 {
   font-weight: 400;
   font-size: 5rem;
