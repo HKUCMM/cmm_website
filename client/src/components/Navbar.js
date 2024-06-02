@@ -63,6 +63,9 @@ function NavBar({ isLoggedIn, setIsLoggedIn }) {
                 style={{ margin: "0px 10px", fontSize: "20px" }}
               >
                 <NavDropdownBS.Item href="">PROFILE</NavDropdownBS.Item>
+                <NavDropdownBS.Item href="change-password">
+                  CHANGE PASSWORD
+                </NavDropdownBS.Item>
                 <NavDropdownBS.Item onClick={handleLogout}>
                   LOGOUT
                 </NavDropdownBS.Item>
