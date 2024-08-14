@@ -4,66 +4,10 @@ const path = require("path");
 var pathname = path.join(__dirname, "../");
 const { getConnection } = require(pathname + "database/mysql");
 
-<<<<<<< HEAD
 // Update the /upload-post route
 router.post("/upload-post", express.urlencoded({ extended: true }), async (req, res) => {
   if (!req.session || !req.session.userId) {
     return res.status(401).send("Unauthorized");
-=======
-
-/**
- * @swagger
- * paths:
- *   /upload-post:
- *     post:
- *       summary: Upload a new post
- *       tags:
- *         - Posts
- *       description: Upload a new post
- *       parameters:
- *         - in: body
- *           name: body
- *           required: true
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: The title of the post
- *                 example: "My New Post"
- *               content:
- *                 type: string
- *                 description: The content of the post
- *                 example: "Hello world"
- *       responses:
- *         200:
- *           description: Post uploaded successfully
- *         500:
- *           description: Internal server error
- */
-router.post(
-  "/upload-post",
-  express.urlencoded({ extended: true }),
-  (req, res) => {
-    if (!req.session || !req.session.userId) {
-      return res.status(401).send("Unauthorized");
-    }
-
-    var title = req.body.title;
-    var content = req.body.content;
-    var authorID = req.session.userId;
-
-    var post =
-      "INSERT INTO posts (title, content, num_of_likes, time_created, author_id) VALUES (?, ?, ?, NOW(), ?)";
-    db.query(post, [title, content, 0, authorID], function (err, result) {
-      if (err) {
-        console.error("Error uploading post", err);
-        res.status(500).send();
-        return;
-      }
-      res.status(200).send();
-    });
->>>>>>> a5454a93ff646ed3d68d8eae89c97f0ac6fa576f
   }
 
   var title = req.body.title;
