@@ -2,13 +2,16 @@
   padding-top: 42.5px;
   padding-right: 20px;
   width: 850px;
-  height: 120x;
+  height: 120px;
   border-bottom: 1px solid silver;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
-.noticeSubBox {
-  display: flex;
-  position: relative;
+.notice-content {
+  flex-grow: 1;
+  cursor: pointer;
 }
 
 .noticeTitle {
@@ -23,8 +26,12 @@
 }
 
 .noticeTitle:hover {
-  cursor: pointer;
   text-decoration: underline;
+}
+
+.noticeSubBox {
+  display: flex;
+  position: relative;
 }
 
 .dateAuthor {
@@ -39,16 +46,35 @@
 
 .likeMessage {
   padding-top: 20px;
-  margin-left: auto; /* Push the item to the right */
+  margin-left: auto;
   position: absolute;
   bottom: 8px;
   right: 0px;
+  display: flex;
+  align-items: center;
+}
+
+.likeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  transition: background-color 0.3s;
+  border-radius: 5px;
+}
+
+.likeButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .likeImg,
 .messageImg {
   width: 20px;
   height: 20px;
+  margin-right: 5px;
 }
 
 .likeCount,
@@ -59,10 +85,10 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  padding: 2px;
   vertical-align: top;
 }
 
-.likeCount {
-  margin-right: 20px;
+.messageWrapper {
+  display: flex;
+  align-items: center;
 }

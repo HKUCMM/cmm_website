@@ -1,6 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const session = require("express-session");
+const { swaggerUi, specs } = require("./modules/swagger");
+
 const app = express();
 
 app.use(
@@ -10,31 +13,30 @@ app.use(
   })
 );
 
-const { swaggerUi, specs } = require("./modules/swagger");
-var userRouter = require("./routes/user");
-var contentRouter = require("./routes/content");
-var commentRouter = require("./routes/comment");
-var session = require("express-session");
-
-app.set("view engine", "ejs");
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === "production" }
   })
 );
 
-app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+const userRouter = require("./routes/user");
+const contentRouter = require("./routes/content");
+const commentRouter = require("./routes/comment");
+
 app.use("/", userRouter);
 app.use("/", contentRouter);
 app.use("/", commentRouter);
 
-var server = app.listen(process.env.PORT, () => {
-  var host = server.address().address;
-  var port = server.address().port;
-  console.log("Example app listening at http://%s:%s", host, port);
+const PORT = process.env.PORT || 8081;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

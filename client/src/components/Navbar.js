@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Navbar as NavbarBS,
   Container as ContainerBS,
@@ -9,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function NavBar({ isLoggedIn, setIsLoggedIn }) {
   const navBarItems = [
+    ["ABOUT US", "about-us"],
     ["PROJECTS", "projects"],
     ["NOTICE", "posts"],
     ["CONTACT US", "contacts"],
@@ -47,6 +47,7 @@ function NavBar({ isLoggedIn, setIsLoggedIn }) {
               const itemLink = navBarItem[1];
               return (
                 <NavBS.Link
+                  key={itemName}
                   onClick={() => handleNavClick(itemLink)}
                   style={{
                     margin: "0px 10px",

@@ -6,6 +6,7 @@ import Mynav from "./components/Navbar.js";
 import Footer from "./components/Footer.js";
 import Notice from "./routes/notice.js";
 import Post from "./routes/post.js";
+import AboutUs from "./routes/aboutus.js"
 import PageNotFound from "./routes/PageNotFound.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -22,6 +23,7 @@ function App() {
             path="/login"
             element={<Login setIsLoggedIn={setIsLoggedIn} />}
           />
+          <Route path="/about-us" element={<AboutUs/>} />
           <Route path="/posts" element={<Notice />} />
           <Route path="/posts/:postId" element={<Post />} />
           <Route path="*" element={<PageNotFound />} />

@@ -1,0 +1,135 @@
+.aboutUsBackground {
+    background: #1d2528;
+    color: #fff;
+    font-family: "Titillium Web", sans-serif;
+    min-height: 100vh;
+    padding: 50px 0;
+  }
+  
+  .about-us-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .about-us-section {
+    margin-bottom: 60px;
+  }
+  
+  .section-title {
+    color: #fff;
+    font-size: 36px;
+    font-weight: 300;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+  }
+  
+  .section-content {
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 800px;
+  }
+  
+  .section-content p {
+    margin-bottom: 20px;
+  }
+  
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+  }
+  
+  .team-card {
+    background: #2c3e50;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .team-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .team-name {
+    color: #3498db;
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .team-description {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+  
+  .team-streams h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .team-streams ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .team-streams li {
+    background: #34495e;
+    border-radius: 5px;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+  }
+  
+  .process-structure ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  .process-structure ul li {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+  
+  .process-structure ul li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-left: 2px solid #3498db;
+    border-bottom: 2px solid #3498db;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .process-structure ul li:last-child::before {
+    height: 20px;
+  }
+  
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 24px;
+    color: #fff;
+  }
+  
+  @media (max-width: 768px) {
+    .about-us-container {
+      padding: 0 15px;
+    }
+  
+    .section-title {
+      font-size: 28px;
+    }
+  
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+  }

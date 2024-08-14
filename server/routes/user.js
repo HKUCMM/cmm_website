@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require("path");
 const crypto = require("crypto");
 const pathname = path.join(__dirname, "../");
-const { db } = require(pathname + "database/mysql");
+const { getConnection } = require(pathname + "database/mysql");
 
 const pbkdf2_iterations = 10371;
 
@@ -20,6 +20,17 @@ function createHash(userPassword) {
 
   return hash.digest("hex");
 }
+
+// Middleware to establish database connection
+// router.use(async (req, res, next) => {
+//   try {
+//     req.db = await connectToDatabase();
+//     next();
+//   } catch (err) {
+//     console.error("Failed to connect to the database:", err);
+//     res.status(500).json({ error: "Database connection failed" });
+//   }
+// });
 
 /**
  * @swagger
@@ -165,51 +176,40 @@ router.post(
  *                type: string
  */
 
-router.post(
-  "/login",
-  express.urlencoded({ extended: true }),
-  async (req, res) => {
-    const loginEmail = req.body.loginEmail;
-    const loginPassword = req.body.loginPassword;
+router.post("/login", express.urlencoded({ extended: true }), async (req, res) => {
+  const { loginEmail, loginPassword } = req.body;
+  let connection;
 
-    // Proceed with the main login check if the first login check passes without redirect
-    const query = `SELECT member_id, \`name.first\`, \`name.last\`, email, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
-    try {
-      const results = await new Promise((resolve, reject) => {
-        db.query(query, [loginEmail], function (err, results) {
-          if (err) reject(err);
-          else resolve(results);
-        });
-      });
+  try {
+    connection = await getConnection();
+    const query = `SELECT member_id, name_first, name_last, email, is_admin, team_id, salt, hashed_password FROM members WHERE email = ?`;
+    const [results] = await connection.execute(query, [loginEmail]);
 
-      if (results.length === 0) {
-        res.status(401).send("No user found");
-        return;
-      }
-
-      const verified = checkPassword(
-        results[0].hashed_password,
-        results[0].salt,
-        loginPassword
-      );
-
-      if (verified) {
-        req.session.email = loginEmail;
-        req.session.userId = results[0].member_id;
-        res.status(200).json({
-          firstName: results[0]["name.first"],
-          lastName: results[0]["name.last"],
-          isAdmin: results[0].is_admin,
-        });
-      } else {
-        res.status(401).send("login info incorrect");
-      }
-    } catch (err) {
-      res.status(500).send();
+    if (results.length === 0) {
+      return res.status(401).json({ message: "No user found" });
     }
-  }
-);
 
+    const user = results[0];
+    const verified = checkPassword(user.hashed_password, user.salt, loginPassword);
+
+    if (verified) {
+      req.session.email = loginEmail;
+      req.session.userId = user.member_id;
+      res.status(200).json({
+        firstName: user.name_first,
+        lastName: user.name_last,
+        isAdmin: user.is_admin,
+      });
+    } else {
+      res.status(401).json({ message: "Login information incorrect" });
+    }
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "An error occurred during login" });
+  } finally {
+    if (connection) connection.release();
+  }
+});
 /**
  * @swagger
  * paths:
