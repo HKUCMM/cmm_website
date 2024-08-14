@@ -156,7 +156,7 @@ const Login = ({ setIsLoggedIn }) => {
           <p className="errorPassword">{errors.password}</p>
         )}
         {/* <p className="forget">Forgot Password?</p> 링크로 바꿔야 함 */}
-        <button type="submit" className="loginButton">
+        <button type="submit" className="loginButton" style={{ marginTop: 0 }}>
           Login
         </button>
         <p className="signup">Don't have an account? Sign Up</p>{" "}

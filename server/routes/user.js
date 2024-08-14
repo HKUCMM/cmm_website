@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 const crypto = require("crypto");
+const { create } = require("domain");
 const pathname = path.join(__dirname, "../");
 const { getConnection } = require(pathname + "database/mysql");
 
@@ -118,25 +119,34 @@ router.post(
   express.urlencoded({ extended: true }),
   async (req, res) => {
     const newPassword = req.body.newPassword;
-    const queryA = `SELECT salt FROM members WHERE member_id = ? `;
-
+    const oldPassword = req.body.oldPassword;
+    const queryA = `SELECT hashed_password, salt FROM members WHERE member_id = ?`;
     db.query(queryA, [req.session.userId], function (err, results) {
       if (err) {
         res.status(404).send();
       } else {
         const userSalt = results[0].salt;
-        const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ?`;
-        db.query(
-          queryB,
-          [createHash(newPassword + userSalt), req.body.userId],
-          function (err, results) {
-            if (err) {
-              res.status(401).send();
-            } else {
-              res.status(200).send("updated successfully");
+        const hashedOldPassword = createHash(oldPassword + userSalt);
+        if (results[0].hashed_password !== hashedOldPassword) {
+          res.status(401).send();
+        } else {
+          const queryB = `UPDATE members SET hashed_password = ? WHERE member_id = ? AND hashed_password = ?`;
+          db.query(
+            queryB,
+            [
+              createHash(newPassword + userSalt),
+              req.session.userId,
+              hashedOldPassword,
+            ],
+            function (err, results) {
+              if (err) {
+                res.status(401).send();
+              } else {
+                res.status(200).send("updated successfully");
+              }
             }
-          }
-        );
+          );
+        }
       }
     });
   }
